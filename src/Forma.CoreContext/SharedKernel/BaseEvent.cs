@@ -14,6 +14,11 @@ public abstract class BaseEvent :INotification
     public string MessageType { get; protected init; }
 
     /// <summary>
+    /// Gets the event ID.
+    /// </summary>
+    public Guid Id { get; protected init; }
+
+    /// <summary>
     /// Gets the aggregate ID.
     /// </summary>
     public Guid AggregateId { get; protected init; }

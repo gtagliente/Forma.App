@@ -88,7 +88,7 @@ internal sealed class UnitOfWork(
 
         // Convert domain events to event stores
         var eventStores = domainEvents
-            .ConvertAll(@event => new EventStore(@event.AggregateId, @event.GetGenericTypeName(), @event.ToJson()));
+            .ConvertAll(@event => new EventStore(@event.Id, @event.AggregateId, @event.GetGenericTypeName(), @event.ToJson()));
 
         // Clear domain events from the entities
         domainEntities.ForEach(entry => entry.Entity.ClearDomainEvents());

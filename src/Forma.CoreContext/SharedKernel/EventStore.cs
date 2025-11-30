@@ -13,8 +13,9 @@ public class EventStore : BaseEvent
     /// <param name="aggregateId">The aggregate ID.</param>
     /// <param name="messageType">The message type.</param>
     /// <param name="data">The data.</param>
-    public EventStore(Guid aggregateId, string messageType, string data)
+    public EventStore(Guid id, Guid aggregateId, string messageType, string data)
     {
+        Id= id;
         AggregateId = aggregateId;
         MessageType = messageType;
         Data = data;
@@ -27,10 +28,6 @@ public class EventStore : BaseEvent
     {
     }
 
-    /// <summary>
-    /// Gets or sets the ID.
-    /// </summary>
-    public Guid Id { get; private init; } = Guid.NewGuid();
 
     /// <summary>
     /// Gets or sets the data.
