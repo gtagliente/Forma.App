@@ -13,13 +13,13 @@ public abstract class ExerciseBaseEvent : BaseEvent
         string description
         )
     {
+        Id = Guid.NewGuid();
         AggregateId = aggregateId;
         MuscleGroup = muscleGroup;
         Name = name;
         Description = description;
     }
 
-    public Guid Id { get; private init; }
     public MuscleGroup MuscleGroup { get; private init; }
     public string Name { get; private init; }
     public string Description { get; private init; }

@@ -363,3 +363,6 @@ MigrationBackup/
 *.sln.iml
 .idea/
 .run/*
+/src/Forma.PublicApi/appsettings.Development.json
+/.env
+/README.md
