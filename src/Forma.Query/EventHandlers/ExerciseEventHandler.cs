@@ -24,7 +24,7 @@ public class ExerciseEventHandler<T>(
         LogEvent(notification);
 
         var exerciseQueryModel = mapper.Map<ExerciseQueryModel>(notification);
-        await synchronizeDb.UpsertAsync(exerciseQueryModel, filter => filter.Id == exerciseQueryModel.Id);
+        await synchronizeDb.UpsertAsync(exerciseQueryModel, filter => filter.Id == notification.AggregateId);
         await ClearCacheAsync(notification);
     }
 
