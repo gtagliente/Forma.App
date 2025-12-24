@@ -23,6 +23,11 @@ internal static class EntityTypeBuilderExtensions
             .IsRequired()
             .ValueGeneratedNever();
 
+        builder
+            .Property(entity => entity.RowVersion)
+            .IsRequired()
+            .IsRowVersion();
+
         // Ignores the DomainEvents property for the entity.
         builder
             .Ignore(entity => entity.DomainEvents);

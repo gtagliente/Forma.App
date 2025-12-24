@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Forma.CoreContext.SharedKernel;
 
@@ -20,6 +21,9 @@ public abstract class BaseEntity : IEntity<Guid>
     /// </summary>
     /// <param name="id">The unique identifier of the entity.</param>
     protected BaseEntity(Guid id) => Id = id;
+
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = new byte[0];
 
     /// <summary>
     /// Gets the domain events associated with this entity.
