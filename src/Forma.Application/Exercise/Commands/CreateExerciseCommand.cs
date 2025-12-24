@@ -3,6 +3,7 @@ using Ardalis.Result;
 using Forma.Domain.Entities.ExerciseAggregate.ValueObjects;
 using MediatR;
 using Forma.Application.Exercise.Responses;
+using System.Collections.Generic;
 
 namespace Forma.Application.Exercise.Commands;
 
@@ -19,6 +20,6 @@ public class CreateExerciseCommand : IRequest<Result<CreatedExerciseResponse>>
     public string Description { get; set; }
 
     [Required]
-    public MuscleGroup MuscleGroup { get; set; }
+    public IEnumerable<MuscleGroup> MuscleGroups { get; set; }
 
 }

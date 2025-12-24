@@ -14,7 +14,7 @@ public class CreateCustomerCommandValidator : AbstractValidator<CreateExerciseCo
             .NotEmpty()
             .MaximumLength(100);
 
-        //RuleFor(command => command.MuscleGroup)
-        //    .NotEmpty();
+        RuleFor(command => command.MuscleGroups)
+            .NotEmpty();
     }
 }

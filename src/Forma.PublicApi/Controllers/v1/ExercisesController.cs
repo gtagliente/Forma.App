@@ -22,13 +22,13 @@ namespace Forma.PublicApi.Controllers.V1;
 public class ExercisesController(IMediator mediator) : ControllerBase
 {
     ////////////////////////
-    // POST: /api/customers
+    // POST: /api/exercises
     ////////////////////////
 
     /// <summary>
     /// Register a new customer.
     /// </summary>
-    /// <response code="201">Returns the Id of the new client.</response>
+    /// <response code="201">Returns the Id of the new exercise.</response>
     /// <response code="400">Returns list of errors if the request is invalid.</response>
     /// <response code="500">When an unexpected internal error occurs on the server.</response>
     [HttpPost]

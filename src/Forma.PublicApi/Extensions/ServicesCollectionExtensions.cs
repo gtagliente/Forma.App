@@ -1,5 +1,10 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Forma.CoreInfrastructure.AppSettings;
+using Forma.CoreInfrastructure.Extensions;
+using Forma.Infrastructure;
+using Forma.Infrastructure.Data.Context;
+using Forma.Infrastructure.Data.Services.Seeders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -8,10 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using Forma.CoreInfrastructure.AppSettings;
-using Forma.CoreInfrastructure.Extensions;
-using Forma.Infrastructure;
-using Forma.Infrastructure.Data.Context;
 
 namespace Forma.PublicApi.Extensions;
 
@@ -48,7 +49,14 @@ internal static class ServicesCollectionExtensions
         if (!environment.IsEnvironment(TestingEnvironmentName))
         {
             services.AddDbContextPool<WriteDbContext>((serviceProvider, optionsBuilder) =>
-                ConfigureDbContext<WriteDbContext>(serviceProvider, optionsBuilder, QueryTrackingBehavior.TrackAll));
+            {
+                //https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding#model-seed-data
+                optionsBuilder.UseAsyncSeeding(async (context, _, cancellationToken) =>
+                {
+                    await StaticValueObjectsSeeder.SeedAsync(context as WriteDbContext);
+                });
+                ConfigureDbContext<WriteDbContext>(serviceProvider, optionsBuilder, QueryTrackingBehavior.TrackAll);
+            });
 
             services.AddDbContextPool<EventStoreDbContext>((serviceProvider, optionsBuilder) =>
                 ConfigureDbContext<EventStoreDbContext>(serviceProvider, optionsBuilder, QueryTrackingBehavior.NoTrackingWithIdentityResolution));
