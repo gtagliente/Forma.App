@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Forma.CoreContext.SharedKernel;
 using Forma.Domain.Builders.Contracts;
@@ -11,24 +13,27 @@ public class Exercise : BaseEntity, IAggregateRoot
 {
     public string Name { get; private set; } = default!;
     public string Description { get; private set; }
-    public MuscleGroup MuscleGroup { get; private set; }
+
+    // internal  collection (assign only inside the aggregate)
+    private List<MuscleGroup> _muscleGroups = [];
+    public IReadOnlyCollection<MuscleGroup> MuscleGroups => _muscleGroups;
 
     // Convenience property for a strongly typed ID
     public ExerciseId ExerciseId => new(Id);
 
     private IExerciseBuilder _builder;
-    private Exercise(Guid id, string name, MuscleGroup muscleGroup, string description)
+    private Exercise(Guid id, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
         : base(id)
     {
         Name = name;
-        MuscleGroup = muscleGroup;
+        _muscleGroups = muscleGroups.ToList(); 
         Description = description;
     }
 
 
     private Exercise() { } // For EF or serialization
 
-    public static async Task<Exercise> Create(IExerciseBuilder builder, string name, MuscleGroup muscleGroup, string description)
+    public static async Task<Exercise> Create(IExerciseBuilder builder, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
     {
         if (builder == null)
             throw new ArgumentNullException($"Required builder {nameof(builder)}");
@@ -43,16 +48,18 @@ public class Exercise : BaseEntity, IAggregateRoot
             throw new ArgumentException("Exercise name is required.");
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Exercise description is required.");
+        if (muscleGroups is null || muscleGroups.Count() == 0)
+            throw new ArgumentException("At least one muscle group must be specified.");
 
-        var exercise = new Exercise(Guid.NewGuid(), name, muscleGroup, description)
+        var exercise = new Exercise(Guid.NewGuid(), name, muscleGroups, description)
         {
             _builder = builder
         };
-        exercise.AddDomainEvent(new ExerciseCreatedEvent(exercise.ExerciseId.Value, exercise.MuscleGroup, exercise.Name, exercise.Description));
+        exercise.AddDomainEvent(new ExerciseCreatedEvent(exercise.ExerciseId.Value, exercise.MuscleGroups, exercise.Name, exercise.Description));
         return exercise;
     }
 
-    public async Task<bool> Update(string name = null, string description = null, MuscleGroup? muscleGroup = null)
+    public async Task<bool> Update(string name = null, string description = null, IEnumerable<MuscleGroup> muscleGroups = null)
     {
         if (name is not null && string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Name cannot be empty.");
@@ -73,14 +80,19 @@ public class Exercise : BaseEntity, IAggregateRoot
             hasChanged = true;
         }
 
-        if (muscleGroup is not null && muscleGroup.Value != MuscleGroup)
+        if (muscleGroups is not null)
         {
-            MuscleGroup = muscleGroup.Value;
-            hasChanged = true;
+            if(muscleGroups.Count()==0)
+                throw new ArgumentException("At least one muscle group must be specified.");
+            if (!muscleGroups.SequenceEqual(_muscleGroups))
+            {
+                _muscleGroups = muscleGroups.ToList();
+                hasChanged = true;
+            }
         }
 
         if (hasChanged)
-            AddDomainEvent(new ExerciseUpdatedEvent(ExerciseId.Value, MuscleGroup, Name, Description));
+            AddDomainEvent(new ExerciseUpdatedEvent(ExerciseId.Value, MuscleGroups, Name, Description));
         return hasChanged;
     }
 }

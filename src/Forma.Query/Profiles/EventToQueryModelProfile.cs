@@ -12,7 +12,7 @@ public class EventToQueryModelProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.AggregateId))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.MuscleGroup, opt => opt.MapFrom(src => src.MuscleGroup));
+            .ForMember(dest => dest.MuscleGroups, opt => opt.MapFrom(src => src.MuscleGroups));
 
         //CreateMap<CustomerUpdatedEvent, CustomerQueryModel>(MemberList.Destination)
         //    .ConstructUsing(@event => CreateCustomerQueryModel(@event));

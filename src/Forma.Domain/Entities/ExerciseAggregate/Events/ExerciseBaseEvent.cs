@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Forma.CoreContext.SharedKernel;
 using Forma.Domain.Entities.ExerciseAggregate.ValueObjects;
 
@@ -8,19 +9,19 @@ public abstract class ExerciseBaseEvent : BaseEvent
 {
     protected ExerciseBaseEvent(
         Guid aggregateId,
-        MuscleGroup muscleGroup,
+        IReadOnlyCollection<MuscleGroup> muscleGroups,
         string name,
         string description
         )
     {
         Id = Guid.NewGuid();
         AggregateId = aggregateId;
-        MuscleGroup = muscleGroup;
+        MuscleGroups = muscleGroups;
         Name = name;
         Description = description;
     }
 
-    public MuscleGroup MuscleGroup { get; private init; }
+    public IReadOnlyCollection<MuscleGroup> MuscleGroups { get; private init; }
     public string Name { get; private init; }
     public string Description { get; private init; }
 }

@@ -21,7 +21,7 @@ public class ExerciseMap : IReadDbMapping
             classMap.MapMember(exercise => exercise.Name)
                 .SetIsRequired(true);
 
-            classMap.MapMember(exercise => exercise.MuscleGroup)
+            classMap.MapMember(exercise => exercise.MuscleGroups)
                 .SetIsRequired(true);
 
             classMap.MapMember(exercise => exercise.Description)
