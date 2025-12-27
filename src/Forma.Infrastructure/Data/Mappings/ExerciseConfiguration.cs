@@ -85,13 +85,13 @@ internal class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
         return string.Join('|', mem.Select(m => ((int)m).ToString()));
     }
 
-    private static IReadOnlyCollection<MuscleGroup> ConvertStringToMuscleGroups(string s)
+    private static List<MuscleGroup> ConvertStringToMuscleGroups(string s)
     {
-        if (string.IsNullOrWhiteSpace(s)) return Array.Empty<MuscleGroup>().AsReadOnly();
+        if (string.IsNullOrWhiteSpace(s)) return Array.Empty<MuscleGroup>().ToList();
         var arr = s.Split('|', StringSplitOptions.RemoveEmptyEntries)
                    .Select(token => (MuscleGroup)int.Parse(token))
-                   .ToArray();
-        return arr.AsReadOnly();
+                   .ToList();
+        return arr;
     }
 
     private static bool EqualsExpression(IReadOnlyCollection<MuscleGroup> a, IReadOnlyCollection<MuscleGroup> b)
