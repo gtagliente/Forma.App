@@ -15,9 +15,10 @@ internal class ExerciseWriteOnlyRepository(WriteDbContext dbContext)
 {
     public async Task<bool> IsUniqueAsync(string name)
     {
-        return await DbContext.Set<Exercise>()
+        var count = await DbContext.Set<Exercise>()
             .AsNoTracking()
             .Where(e => e.Name == name)
-            .CountAsync()>0;
+            .CountAsync();
+        return count == 0;
     }
 }

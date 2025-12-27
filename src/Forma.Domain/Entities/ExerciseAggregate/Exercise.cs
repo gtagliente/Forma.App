@@ -41,7 +41,7 @@ public class Exercise : BaseEntity, IAggregateRoot
 
         if (contracts.uniquenessChecker == null)
              throw new ArgumentException($"Required contract {nameof(contracts.uniquenessChecker)}");
-        if(await contracts.uniquenessChecker.IsUniqueAsync(name))
+        if(!await contracts.uniquenessChecker.IsUniqueAsync(name))
             throw new ArgumentException("An exercise with the same name already exists.");
 
         if (string.IsNullOrWhiteSpace(name))
