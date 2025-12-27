@@ -25,6 +25,7 @@ using Forma.Query;
 using StackExchange.Profiling;
 using Forma.Domain;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
@@ -62,7 +63,6 @@ builder.Services.AddControllers()
     .AddJsonOptions(_ => { });
 
 // Adding the application services in ASP.NET Core DI.
-try { 
 builder.Services
     .ConfigureAppSettings()
     .AddInfrastructure()
@@ -76,11 +76,6 @@ builder.Services
     .AddCacheService(builder.Configuration)
     .AddHealthChecks(builder.Configuration)
     .AddDefaultCorrelationId();
-}catch(Exception ex)
-{
-    Console.WriteLine(ex.ToString());
-    throw;
-}
 
 // MiniProfiler for .NET
 // https://miniprofiler.com/dotnet/
@@ -149,3 +144,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 await app.ConfigureAndRunAppAsync();
+
+public partial class Program { }

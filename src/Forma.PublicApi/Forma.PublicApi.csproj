@@ -82,4 +82,10 @@
     </SonarQubeSetting>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.IntegrationTesting.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
