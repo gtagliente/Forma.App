@@ -6,8 +6,17 @@ using CorrelationId;
 using CorrelationId.DependencyInjection;
 using FluentValidation;
 using FluentValidation.Resources;
+using Forma.Application;
+using Forma.CoreInfrastructure;
+using Forma.CoreInfrastructure.Extensions;
+using Forma.Domain;
+using Forma.Infrastructure;
+using Forma.PublicApi.Extensions;
+using Forma.PublicApi.Middlewares;
+using Forma.Query;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -16,14 +25,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Scalar.AspNetCore;
-using Forma.Application;
-using Forma.CoreInfrastructure;
-using Forma.CoreInfrastructure.Extensions;
-using Forma.Infrastructure;
-using Forma.PublicApi.Extensions;
-using Forma.Query;
 using StackExchange.Profiling;
-using Forma.Domain;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,6 +78,8 @@ builder.Services
     .AddCacheService(builder.Configuration)
     .AddHealthChecks(builder.Configuration)
     .AddDefaultCorrelationId();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // MiniProfiler for .NET
 // https://miniprofiler.com/dotnet/
@@ -134,7 +138,7 @@ app.MapScalarApiReference(scalarOptions =>
     scalarOptions.Title = "Forma API";
 });
 
-app.UseErrorHandling();
+app.UseExceptionHandler(o => { });
 app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseMiniProfiler();

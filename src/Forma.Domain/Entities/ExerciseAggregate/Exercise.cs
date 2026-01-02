@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Forma.CoreContext.SharedKernel;
+using Forma.CoreContext.SharedKernel.Exceptions.DomainExceptions;
 using Forma.Domain.Builders.Contracts;
 using Forma.Domain.Entities.ExerciseAggregate.Events;
 using Forma.Domain.Entities.ExerciseAggregate.ValueObjects;
@@ -36,20 +37,20 @@ public class Exercise : BaseEntity, IAggregateRoot
     public static async Task<Exercise> Create(IExerciseBuilder builder, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
     {
         if (builder == null)
-            throw new ArgumentNullException($"Required builder {nameof(builder)}");
+            throw new DomainBadCodeException($"Required builder {nameof(builder)}");
         var contracts = builder._contracts;
 
         if (contracts.uniquenessChecker == null)
-             throw new ArgumentException($"Required contract {nameof(contracts.uniquenessChecker)}");
+             throw new DomainBadCodeException($"Required contract {nameof(contracts.uniquenessChecker)}");
         if(!await contracts.uniquenessChecker.IsUniqueAsync(name))
-            throw new ArgumentException("An exercise with the same name already exists.");
+            throw new DomainArgumentException("An exercise with the same name already exists.");
 
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Exercise name is required.");
+            throw new DomainArgumentException("Exercise name is required.");
         if (string.IsNullOrWhiteSpace(description))
-            throw new ArgumentException("Exercise description is required.");
+            throw new DomainArgumentException("Exercise description is required.");
         if (muscleGroups is null || muscleGroups.Count() == 0)
-            throw new ArgumentException("At least one muscle group must be specified.");
+            throw new DomainArgumentException("At least one muscle group must be specified.");
 
         var exercise = new Exercise(Guid.NewGuid(), name, muscleGroups, description)
         {
@@ -62,14 +63,14 @@ public class Exercise : BaseEntity, IAggregateRoot
     public async Task<bool> Update(string name = null, string description = null, IEnumerable<MuscleGroup> muscleGroups = null)
     {
         if (name is not null && string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Name cannot be empty.");
+            throw new DomainArgumentException("Name cannot be empty.");
 
         var hasChanged = false;
 
         if (name is not null && name != Name)
         {
             if (!await _builder._contracts.uniquenessChecker.IsUniqueAsync(name))
-                throw new ArgumentException("An exercise with the same name already exists.");
+                throw new DomainArgumentException("An exercise with the same name already exists.");
             Name = name.Trim();
             hasChanged = true;
         }
@@ -83,7 +84,7 @@ public class Exercise : BaseEntity, IAggregateRoot
         if (muscleGroups is not null)
         {
             if(muscleGroups.Count()==0)
-                throw new ArgumentException("At least one muscle group must be specified.");
+                throw new DomainArgumentException("At least one muscle group must be specified.");
             if (!muscleGroups.SequenceEqual(_muscleGroups))
             {
                 _muscleGroups = muscleGroups.ToList();
