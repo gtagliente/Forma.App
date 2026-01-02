@@ -13,12 +13,15 @@ using Forma.PublicApi.Extensions;
 using Forma.PublicApi.Models;
 using Forma.Query.Application.Exercise.Queries;
 using Forma.Query.QueriesModel;
+using Forma.PublicApi.Filters.Exceptions;
 
 namespace Forma.PublicApi.Controllers.V1;
 
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/[controller]")]
+[TypeFilter<DomainExceptionToActionResultFilter>]
+
 public class ExercisesController(IMediator mediator) : ControllerBase
 {
     ////////////////////////
