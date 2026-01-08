@@ -1,3 +1,4 @@
+using Forma.Domain.Entities.ExerciseAggregate.Contracts;
 using Shop.Domain.Entities.CustomerAggregate;
 
 namespace Forma.Domain.Builders.Contracts;
@@ -9,6 +10,8 @@ public interface IExerciseBuilder
     struct Contracts
     {
         public readonly IExerciseUniquenessChecker uniquenessChecker {  get; init; }
+
+        public  readonly IExerciseResourceLinkUniquenessChecker exerciseResourceLinkUniquenessChecker {  get; init; }
     }
 
 }

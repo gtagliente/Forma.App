@@ -34,7 +34,7 @@ public class ExercisesController(IMediator mediator) : ControllerBase
     /// <response code="201">Returns the Id of the new exercise.</response>
     /// <response code="400">Returns list of errors if the request is invalid.</response>
     /// <response code="500">When an unexpected internal error occurs on the server.</response>
-    [HttpPost]
+    [HttpPost(nameof(Create))]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ApiResponse<CreatedExerciseResponse>), StatusCodes.Status201Created)]
@@ -115,11 +115,27 @@ public class ExercisesController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <response code="200">Returns the list of clients.</response>
     /// <response code="500">When an unexpected internal error occurs on the server.</response>
-    [HttpGet]
+    [HttpGet(nameof(GetAll))]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ApiResponse<IEnumerable<ExerciseQueryModel>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll() =>
         (await mediator.Send(new GetAllExerciseQuery())).ToActionResult();
+
+
+    /// <summary>
+    /// Register a new customer.
+    /// </summary>
+    /// <response code="201">Returns the Id of the new exercise resource.</response>
+    /// <response code="400">Returns list of errors if the request is invalid.</response>
+    /// <response code="500">When an unexpected internal error occurs on the server.</response>
+    [HttpPost(nameof(CreateExerciseResource))]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ApiResponse<CreatedExerciseResourceResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CreateExerciseResource([FromBody][Required] CreateExerciseResourceCommand command) =>
+        (await mediator.Send(command)).ToActionResult();
 }

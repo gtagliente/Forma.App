@@ -62,6 +62,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forma.CoreContext", "src\Fo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forma.CoreInfrastructure", "src\Forma.CoreInfrastructure\Forma.CoreInfrastructure.csproj", "{543135A3-8D5E-D4FE-2FC5-E98BAEFBBABD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forma.ArchitectureTests", "tests\Forma.ArchitectureTests\Forma.ArchitectureTests.csproj", "{BFCB0C57-BF9A-44AC-A316-62EB6358FEFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,10 @@ Global
 		{543135A3-8D5E-D4FE-2FC5-E98BAEFBBABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{543135A3-8D5E-D4FE-2FC5-E98BAEFBBABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{543135A3-8D5E-D4FE-2FC5-E98BAEFBBABD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFCB0C57-BF9A-44AC-A316-62EB6358FEFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFCB0C57-BF9A-44AC-A316-62EB6358FEFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFCB0C57-BF9A-44AC-A316-62EB6358FEFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFCB0C57-BF9A-44AC-A316-62EB6358FEFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,6 +132,7 @@ Global
 		{9371D508-9FCA-4AED-ABCF-AF9457E743AC} = {8011CDDD-0814-4C74-9B74-C3E3365D50CC}
 		{F859B6D3-98E4-F114-EE4A-185A98BB4589} = {9371D508-9FCA-4AED-ABCF-AF9457E743AC}
 		{543135A3-8D5E-D4FE-2FC5-E98BAEFBBABD} = {9371D508-9FCA-4AED-ABCF-AF9457E743AC}
+		{BFCB0C57-BF9A-44AC-A316-62EB6358FEFA} = {DFB189FE-F11B-46EA-A5CD-3571CEC8193A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D3430C31-E885-4BC5-97D3-B2FF8E8F28B7}

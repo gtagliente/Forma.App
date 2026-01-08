@@ -20,9 +20,12 @@ public class Exercise : BaseEntity, IAggregateRoot
     public IReadOnlyCollection<MuscleGroup> MuscleGroups => _muscleGroups;
 
     // Convenience property for a strongly typed ID
-    public ExerciseId ExerciseId => new(Id);
+    public ExerciseId ExerciseId { get; private set; }
 
-    private IExerciseBuilder _builder;
+    private List<ExerciseResource> _resources = [];
+    
+    public IReadOnlyCollection<ExerciseResource> Resources => _resources;
+
     private Exercise(Guid id, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
         : base(id)
     {
@@ -32,7 +35,8 @@ public class Exercise : BaseEntity, IAggregateRoot
     }
 
 
-    private Exercise() { } // For EF or serialization
+    private Exercise() {
+    } // For EF or serialization
 
     public static async Task<Exercise> Create(IExerciseBuilder builder, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
     {
@@ -52,15 +56,13 @@ public class Exercise : BaseEntity, IAggregateRoot
         if (muscleGroups is null || muscleGroups.Count() == 0)
             throw new DomainArgumentException("At least one muscle group must be specified.");
 
-        var exercise = new Exercise(Guid.NewGuid(), name, muscleGroups, description)
-        {
-            _builder = builder
-        };
+        var exercise = new Exercise(Guid.NewGuid(), name, muscleGroups, description);
+
         exercise.AddDomainEvent(new ExerciseCreatedEvent(exercise.ExerciseId.Value, exercise.MuscleGroups, exercise.Name, exercise.Description));
         return exercise;
     }
 
-    public async Task<bool> Update(string name = null, string description = null, IEnumerable<MuscleGroup> muscleGroups = null)
+    public async Task<bool> Update(IExerciseBuilder builder, string name = null, string description = null, IEnumerable<MuscleGroup> muscleGroups = null)
     {
         if (name is not null && string.IsNullOrWhiteSpace(name))
             throw new DomainArgumentException("Name cannot be empty.");
@@ -69,7 +71,7 @@ public class Exercise : BaseEntity, IAggregateRoot
 
         if (name is not null && name != Name)
         {
-            if (!await _builder._contracts.uniquenessChecker.IsUniqueAsync(name))
+            if (!await builder._contracts.uniquenessChecker.IsUniqueAsync(name))
                 throw new DomainArgumentException("An exercise with the same name already exists.");
             Name = name.Trim();
             hasChanged = true;
@@ -95,5 +97,33 @@ public class Exercise : BaseEntity, IAggregateRoot
         if (hasChanged)
             AddDomainEvent(new ExerciseUpdatedEvent(ExerciseId.Value, MuscleGroups, Name, Description));
         return hasChanged;
+    }
+
+    public async Task<ExerciseResource> AddResource(IExerciseBuilder builder, string title, string content, ResourceType type, string link)
+    {
+        if(builder == null)
+            throw new DomainBadCodeException($"Required builder {nameof(builder)}");
+        if  (
+            //Cerco prima nelle entità già presenti per evitare chiamate inutili al db
+            Resources.Any( r => r.Link.Equals(link, StringComparison.CurrentCultureIgnoreCase))
+                    ||
+            !await builder._contracts.exerciseResourceLinkUniquenessChecker.IsUniqueExerciseResourceLinkAsync(link)
+            )
+            throw new DomainArgumentException("A resource with the same link already exists for this exercise.");
+
+        var resource = ExerciseResource.Create(builder, ExerciseId, title, content, type, link);
+        _resources.Add(resource);
+        //AddDomainEvent(new ExerciseDetailAddedEvent(ExerciseId.Value, detail.ExerciseDetailId.Value, detail.Title, detail.Type, detail.Link));
+        return resource;
+    }
+
+    public async Task<bool> RemoveResource(ExerciseResourceId detailId)
+    {
+        var resource = _resources.FirstOrDefault(d => d.ExerciseResourceId == detailId);
+        if (resource == null)
+            return false;
+        _resources.Remove(resource);
+        //AddDomainEvent(new ExerciseDetailRemovedEvent(ExerciseId.Value, detail.ExerciseDetailId.Value));
+        return true;
     }
 }
