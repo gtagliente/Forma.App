@@ -16,8 +16,18 @@ internal class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
 {
     public void Configure(EntityTypeBuilder<Exercise> builder)
     {
+        //TODO: rifattorizzare con baseentity e typed id passato tramite Generics
         builder
             .ConfigureBaseEntity();
+
+        builder
+            .HasKey(e => e.ExerciseId);
+
+        builder
+            .Property(entity => entity.ExerciseId)
+            .HasConversion(e => e.Value, value => new(value))
+            .IsRequired()
+            .ValueGeneratedNever();
 
         builder
             .Property(exercise => exercise.Name)
@@ -58,25 +68,18 @@ internal class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
              .Property(exercise => exercise.RowVersion)
              .IsRequired()
              .IsRowVersion();
-        //// Value Object Mapping (ValueObject)
-        //builder.OwnsOne(customer => customer.Email, ownedNav =>
-        //{
-        //    ownedNav
-        //        .Property(email => email.Address)
-        //        .IsRequired() // NOT NULL
-        //        .HasMaxLength(254)
-        //        .HasColumnName(nameof(Customer.Email));
 
-        //    // Unique Index
-        //    ownedNav
-        //        .HasIndex(email => email.Address)
-        //        .IsUnique();
-        //});
+        builder.HasMany(e => e.Resources)
+                .WithOne()
+                .HasForeignKey(r => r.ExerciseId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Exercise_ExerciseResources");
 
-        //builder
-        //    .Property(customer => customer.DateOfBirth)
-        //    .IsRequired() // NOT NULL
-        //    .HasColumnType("DATE");
+        builder
+            .HasIndex(e => e.Name)
+            .IsUnique()
+            .HasDatabaseName("UQ_Exercise_Name");
     }
 
     private static string ConvertMuscleGroupsToString(IReadOnlyCollection<MuscleGroup> mem)

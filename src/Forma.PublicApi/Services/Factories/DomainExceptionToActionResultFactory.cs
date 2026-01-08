@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Forma.CoreContext.SharedKernel.Exceptions;
 using Forma.CoreContext.SharedKernel.Exceptions.DomainExceptions;
-using Forma.CoreInfrastructure.Abstractions;
 using Forma.PublicApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +10,10 @@ namespace Forma.PublicApi.Services.Factories;
 
 public static class DomainExceptionToActionResultFactory
 {
-    private static readonly Dictionary<Type, Func<string, IActionResult>> _mapping =    [];
+    private static readonly Dictionary<Type, Func<IEnumerable<ApiErrorResponse>, IActionResult>> _mapping =    [];
 
 
-    public static Func<string, IActionResult> TryGetValue(Exception exception)
+    public static Func<IEnumerable<ApiErrorResponse>, IActionResult> TryGetValue(Exception exception)
     {
         if (!(exception is IDomainExceptionMarker))
             return null;
@@ -22,13 +21,13 @@ public static class DomainExceptionToActionResultFactory
     }
 
     private static void Register<TException>(
-    Func<string, IActionResult> factory)
+    Func<IEnumerable<ApiErrorResponse>, IActionResult> factory)
     where TException : IDomainExceptionMarker
     {
         _mapping.Add(typeof(TException), factory);
     }
 
-    private static Func<string, IActionResult> TryGetValue(IDomainExceptionMarker exception)
+    private static Func<IEnumerable<ApiErrorResponse>, IActionResult> TryGetValue(IDomainExceptionMarker exception)
     {
         var exceptionType = exception.GetType();
         if (_mapping.TryGetValue(exceptionType, out var factory))

@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using Forma.CoreContext.SharedKernel;
 using Forma.CoreInfrastructure.Abstractions;
 using Forma.Domain.Entities.ExerciseAggregate;
+using Forma.Domain.Entities.ExerciseAggregate.Contracts;
+
 // using Forma.Domain.Entities.CustomerAggregate;
 using Forma.Infrastructure.Data;
 using Forma.Infrastructure.Data.Context;
@@ -48,5 +50,6 @@ public static class ConfigureServices
          services
             .AddScoped<IEventStoreRepository<EventStore>, EventStoreRepository>()
             .AddScoped<IExerciseWriteOnlyRepository<Exercise, Guid>, ExerciseWriteOnlyRepository>()
-            .AddScoped<IExerciseUniquenessChecker, ExerciseWriteOnlyRepository>();
+            .AddScoped<IExerciseUniquenessChecker, ExerciseWriteOnlyRepository>()
+            .AddScoped<IExerciseResourceLinkUniquenessChecker, ExerciseWriteOnlyRepository>();
 }

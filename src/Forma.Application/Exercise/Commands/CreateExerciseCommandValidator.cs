@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Forma.Application.Exercise.Commands;
 
-public class CreateCustomerCommandValidator : AbstractValidator<CreateExerciseCommand>
+public class CreateExerciseCommandValidator : AbstractValidator<CreateExerciseCommand>
 {
-    public CreateCustomerCommandValidator()
+    public CreateExerciseCommandValidator() 
     {
         RuleFor(command => command.Name)
             .NotEmpty()
