@@ -26,7 +26,7 @@ public class DomainExceptionToActionResultFilter : IExceptionFilter
         if (actionDelegate == null)
             return;
         
-        context.Result = actionDelegate(context.Exception.Message);
+        context.Result = actionDelegate([new (context.Exception.Message)]);
 
     }
 
