@@ -10,13 +10,14 @@ using Forma.CoreInfrastructure.Abstractions;
 using DOMAIN_ENTITIES = Forma.Domain.Entities;
 using Forma.Domain.Builders.Contracts;
 using System;
+using Forma.Domain.Entities.ExerciseAggregate;
 
 
 namespace Forma.Application.Exercise.Handlers;
 
 public class CreateExerciseCommandHandler(
     IValidator<CreateExerciseCommand> validator,
-    IExerciseWriteOnlyRepository<DOMAIN_ENTITIES.ExerciseAggregate.Exercise, Guid> repository,
+    IExerciseWriteOnlyRepository<DOMAIN_ENTITIES.ExerciseAggregate.Exercise, ExerciseId> repository,
     IExerciseBuilder builder,
     IUnitOfWork unitOfWork) : IRequestHandler<CreateExerciseCommand, Result<CreatedExerciseResponse>>
 {
@@ -45,6 +46,6 @@ public class CreateExerciseCommandHandler(
 
         // Returning the ID.
         return Result<CreatedExerciseResponse>.Created(
-            new CreatedExerciseResponse(exercise.Id), location: $"/api/exercises/{exercise.Id}");
+            new CreatedExerciseResponse(exercise.Id.Value), location: $"/api/exercises/{exercise.Id}");
     }
 }

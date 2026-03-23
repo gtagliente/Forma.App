@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Forma.PublicApi.Migrations
 {
     [DbContext(typeof(WriteDbContext))]
-    [Migration("20260107112443_ExerciseResourceMigration")]
+    [Migration("20260321194545_ExerciseResourceMigration")]
     partial class ExerciseResourceMigration
     {
         /// <inheritdoc />
@@ -21,23 +21,20 @@ namespace Forma.PublicApi.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .UseCollation("Latin1_General_CI_AI")
-                .HasAnnotation("ProductVersion", "9.0.11")
+                .HasAnnotation("ProductVersion", "9.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Forma.Domain.Entities.ExerciseAggregate.Exercise", b =>
                 {
-                    b.Property<Guid>("ExerciseId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("MuscleGroups")
                         .IsRequired()
@@ -56,7 +53,7 @@ namespace Forma.PublicApi.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.HasKey("ExerciseId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique()
@@ -67,7 +64,7 @@ namespace Forma.PublicApi.Migrations
 
             modelBuilder.Entity("Forma.Domain.Entities.ExerciseAggregate.ExerciseResource", b =>
                 {
-                    b.Property<Guid>("ExerciseResourceId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
@@ -95,13 +92,13 @@ namespace Forma.PublicApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("ExerciseResourceId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Link")
                         .IsUnique()
                         .HasDatabaseName("UQ_ExerciseResource_Link");
 
-                    b.HasIndex("ExerciseId", "ExerciseResourceId")
+                    b.HasIndex("ExerciseId", "Id")
                         .IsUnique()
                         .HasDatabaseName("UQ_ExerciseResource_ExerciseId_ExerciseResourceId");
 

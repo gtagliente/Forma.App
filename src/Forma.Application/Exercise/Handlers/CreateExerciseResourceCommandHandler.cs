@@ -10,6 +10,7 @@ using Forma.CoreInfrastructure.Abstractions;
 using DOMAIN_ENTITIES = Forma.Domain.Entities;
 using Forma.Domain.Builders.Contracts;
 using System;
+using Forma.Domain.Entities.ExerciseAggregate;
 
 
 namespace Forma.Application.Exercise.Handlers;
@@ -20,7 +21,7 @@ namespace Forma.Application.Exercise.Handlers;
 
 public class CreateExerciseResourceCommandHandler(
     IValidator<CreateExerciseResourceCommand> validator,
-    IExerciseWriteOnlyRepository<DOMAIN_ENTITIES.ExerciseAggregate.Exercise, Guid> repository,
+    IExerciseWriteOnlyRepository<DOMAIN_ENTITIES.ExerciseAggregate.Exercise, ExerciseId> repository,
     IExerciseBuilder builder,
     IUnitOfWork unitOfWork) : IRequestHandler<CreateExerciseResourceCommand, Result<CreatedExerciseResourceResponse>>
 {
@@ -38,7 +39,7 @@ public class CreateExerciseResourceCommandHandler(
 
         // Creating an instance of the exercise entity.
         // When instantiated, the "ExerciseCreatedEvent" will be created.
-        var exercise = await repository.GetByIdAsync(request.ExerciseId.Value);
+        var exercise = await repository.GetByIdAsync(request.ExerciseId);
         if(exercise == null)
             return Result<CreatedExerciseResourceResponse>.NotFound($"Exercise with Id {request.ExerciseId} not found");
 
@@ -54,7 +55,7 @@ public class CreateExerciseResourceCommandHandler(
 
         // Returning the ID.
         return Result<CreatedExerciseResourceResponse>.Created(
-            new CreatedExerciseResourceResponse(exerciseResource.ExerciseResourceId.Value), location: $"/api/exercises/resource/{exerciseResource.ExerciseResourceId.Value}");
+            new CreatedExerciseResourceResponse(exerciseResource.Id.Value), location: $"/api/exercises/resource/{exerciseResource.Id.Value}");
         { }
     }
 }

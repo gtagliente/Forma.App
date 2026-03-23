@@ -8,14 +8,14 @@ namespace Forma.Domain.Entities.ExerciseAggregate.Events;
 public abstract class ExerciseBaseEvent : BaseEvent
 {
     protected ExerciseBaseEvent(
-        Guid aggregateId,
+        ExerciseId aggregateId,
         IReadOnlyCollection<MuscleGroup> muscleGroups,
         string name,
         string description
         )
     {
         Id = Guid.NewGuid();
-        AggregateId = aggregateId;
+        AggregateId = aggregateId.Value;
         MuscleGroups = muscleGroups;
         Name = name;
         Description = description;
