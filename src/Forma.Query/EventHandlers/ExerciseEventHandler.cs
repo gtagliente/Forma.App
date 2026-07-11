@@ -10,14 +10,16 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 
 
-namespace Shop.Query.EventHandlers;
+namespace Forma.Query.EventHandlers;
 
-public class ExerciseEventHandler<T>(
+public class ExerciseEventHandler(
     IMapper mapper,
     ISynchronizeDb synchronizeDb,
     ICacheService cacheService,
-    ILogger<ExerciseEventHandler<T>> logger) :
-    INotificationHandler<ExerciseCreatedEvent> 
+    ILogger<ExerciseEventHandler> logger) :
+    INotificationHandler<ExerciseCreatedEvent>,
+    INotificationHandler<ExerciseUpdatedEvent>,
+    INotificationHandler<ExerciseDeletedEvent>
 {
     public async Task Handle(ExerciseCreatedEvent notification, CancellationToken cancellationToken)
     {
@@ -28,23 +30,22 @@ public class ExerciseEventHandler<T>(
         await ClearCacheAsync(notification);
     }
 
-    //public async Task Handle(CustomerDeletedEvent notification, CancellationToken cancellationToken)
-    //{
-    //    LogEvent(notification);
+    public async Task Handle(ExerciseUpdatedEvent notification, CancellationToken cancellationToken)
+    {
+        LogEvent(notification);
 
-    //    await synchronizeDb.DeleteAsync<CustomerQueryModel>(filter => filter.Email == notification.Email);
-    //    await ClearCacheAsync(notification);
-    //}
+        var exerciseQueryModel = mapper.Map<ExerciseQueryModel>(notification);
+        await synchronizeDb.UpsertAsync(exerciseQueryModel, filter => filter.Id == notification.AggregateId);
+        await ClearCacheAsync(notification);
+    }
 
-    //public async Task Handle(CustomerUpdatedEvent notification, CancellationToken cancellationToken)
-    //{
-    //    LogEvent(notification);
+    public async Task Handle(ExerciseDeletedEvent notification, CancellationToken cancellationToken)
+    {
+        LogEvent(notification);
 
-    //    var customerQueryModel = mapper.Map<CustomerQueryModel>(notification);
-    //    await synchronizeDb.UpsertAsync(customerQueryModel, filter => filter.Id == customerQueryModel.Id);
-    //    await ClearCacheAsync(notification);
-    //}
-
+        await synchronizeDb.DeleteAsync<ExerciseQueryModel>(filter => filter.Id == notification.AggregateId);
+        await ClearCacheAsync(notification);
+    }
 
     private async Task ClearCacheAsync(ExerciseBaseEvent @event)
     {

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Forma.Application.Exercise.Commands;
 using Forma.Application.Exercise.Responses;
+using Forma.Domain.Entities.ExerciseAggregate;
 using Forma.PublicApi.Extensions;
 using Forma.PublicApi.Models;
 using Forma.Query.Application.Exercise.Queries;
@@ -43,47 +44,47 @@ public class ExercisesController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody][Required] CreateExerciseCommand command) =>
         (await mediator.Send(command)).ToActionResult();
 
-    ///////////////////////
-    // PUT: /api/customers
-    //////////////////////
+    /////////////////////////////
+    // PUT: /api/exercises/Update
+    /////////////////////////////
 
-    ///// <summary>
-    ///// Updates an existing client.
-    ///// </summary>
-    ///// <response code="200">Returns the response with the success message.</response>
-    ///// <response code="400">Returns list of errors if the request is invalid.</response>
-    ///// <response code="404">When no client is found by the given Id.</response>
-    ///// <response code="500">When an unexpected internal error occurs on the server.</response>
-    //[HttpPut]
-    //[Consumes(MediaTypeNames.Application.Json)]
-    //[Produces(MediaTypeNames.Application.Json)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
-    //public async Task<IActionResult> Update([FromBody][Required] UpdateCustomerCommand command) =>
-    //    (await mediator.Send(command)).ToActionResult();
+    /// <summary>
+    /// Updates an existing exercise's name, description, and/or muscle groups.
+    /// </summary>
+    /// <response code="200">Returns the response with the success message.</response>
+    /// <response code="400">Returns list of errors if the request is invalid.</response>
+    /// <response code="404">When no exercise is found by the given Id.</response>
+    /// <response code="500">When an unexpected internal error occurs on the server.</response>
+    [HttpPut(nameof(Update))]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Update([FromBody][Required] UpdateExerciseCommand command) =>
+        (await mediator.Send(command)).ToActionResult();
 
-    //////////////////////////////
-    //// DELETE: /api/customers/{id}
-    ////////////////////////////////
+    //////////////////////////////////
+    // DELETE: /api/exercises/{id:guid}
+    //////////////////////////////////
 
-    ///// <summary>
-    ///// Deletes the client by Id.
-    ///// </summary>
-    ///// <response code="200">Returns the response with the success message.</response>
-    ///// <response code="400">Returns list of errors if the request is invalid.</response>
-    ///// <response code="404">When no client is found by the given Id.</response>
-    ///// <response code="500">When an unexpected internal error occurs on the server.</response>
-    //[HttpDelete("{id:guid}")]
-    //[Consumes(MediaTypeNames.Application.Json)]
-    //[Produces(MediaTypeNames.Application.Json)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
-    //public async Task<IActionResult> Delete([Required] Guid id) =>
-    //    (await mediator.Send(new DeleteCustomerCommand(id))).ToActionResult();
+    /// <summary>
+    /// Deletes an exercise by Id. Fails if the exercise still has children in the hierarchy.
+    /// </summary>
+    /// <response code="200">Returns the response with the success message.</response>
+    /// <response code="400">Returns list of errors if the request is invalid.</response>
+    /// <response code="404">When no exercise is found by the given Id.</response>
+    /// <response code="500">When an unexpected internal error occurs on the server.</response>
+    [HttpDelete("{id:guid}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Delete([Required] Guid id) =>
+        (await mediator.Send(new DeleteExerciseCommand(new ExerciseId(id)))).ToActionResult();
 
     ///////////////////////////
     // GET: /api/customers/{id}
@@ -120,8 +121,8 @@ public class ExercisesController(IMediator mediator) : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ApiResponse<IEnumerable<ExerciseQueryModel>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAll() =>
-        (await mediator.Send(new GetAllExerciseQuery())).ToActionResult();
+    public async Task<IActionResult> GetAll([FromQuery] Guid? requestingUserId) =>
+        (await mediator.Send(new GetAllExerciseQuery(requestingUserId))).ToActionResult();
 
 
     /// <summary>
@@ -137,5 +138,47 @@ public class ExercisesController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateExerciseResource([FromBody][Required] CreateExerciseResourceCommand command) =>
+        (await mediator.Send(command)).ToActionResult();
+
+    ///////////////////////////////
+    // POST: /api/exercises/SetParent
+    ///////////////////////////////
+
+    /// <summary>
+    /// Sets (or changes) an Exercise's parent, forming a generalization/specialization relationship.
+    /// </summary>
+    /// <response code="200">Returns the response with the success message.</response>
+    /// <response code="400">Returns list of errors if the request is invalid.</response>
+    /// <response code="404">When no exercise is found by the given Id.</response>
+    /// <response code="500">When an unexpected internal error occurs on the server.</response>
+    [HttpPost(nameof(SetParent))]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SetParent([FromBody][Required] SetExerciseParentCommand command) =>
+        (await mediator.Send(command)).ToActionResult();
+
+    /////////////////////////////////
+    // POST: /api/exercises/ClearParent
+    /////////////////////////////////
+
+    /// <summary>
+    /// Clears an Exercise's parent, if any.
+    /// </summary>
+    /// <response code="200">Returns the response with the success message.</response>
+    /// <response code="400">Returns list of errors if the request is invalid.</response>
+    /// <response code="404">When no exercise is found by the given Id.</response>
+    /// <response code="500">When an unexpected internal error occurs on the server.</response>
+    [HttpPost(nameof(ClearParent))]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ClearParent([FromBody][Required] ClearExerciseParentCommand command) =>
         (await mediator.Send(command)).ToActionResult();
 }

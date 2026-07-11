@@ -1,10 +1,12 @@
-// using System;
-// using Ardalis.Result;
-// using MediatR;
+using System.ComponentModel.DataAnnotations;
+using Ardalis.Result;
+using Forma.Domain.Entities.ExerciseAggregate;
+using MediatR;
 
-// namespace Shop.Application.Customer.Commands;
+namespace Forma.Application.Exercise.Commands;
 
-// public class DeleteCustomerCommand(Guid id) : IRequest<Result>
-// {
-//     public Guid Id { get; } = id;
-// }
+public class DeleteExerciseCommand(ExerciseId exerciseId) : IRequest<Result>
+{
+    [Required]
+    public ExerciseId ExerciseId { get; } = exerciseId;
+}

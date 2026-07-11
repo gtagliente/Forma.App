@@ -11,17 +11,21 @@ namespace Forma.Query.Data.Repositories;
 internal class ExerciseReadOnlyRepository(IReadDbContext readDbContext)
     : BaseReadOnlyRepository<ExerciseQueryModel, Guid>(readDbContext), IExerciseReadOnlyRepository
 {
-    public async Task<IEnumerable<ExerciseQueryModel>> GetAllAsync()
+    public async Task<IEnumerable<ExerciseQueryModel>> GetVisibleToAsync(Guid? requestingUserId)
     {
         var sort = Builders<ExerciseQueryModel>.Sort
-            .Ascending(customer => customer.Name);
+            .Ascending(exercise => exercise.Name);
 
         var findOptions = new FindOptions<ExerciseQueryModel>
         {
             Sort = sort
         };
 
-        using var asyncCursor = await Collection.FindAsync(Builders<ExerciseQueryModel>.Filter.Empty, findOptions);
+        var filter = Builders<ExerciseQueryModel>.Filter.Or(
+            Builders<ExerciseQueryModel>.Filter.Eq(exercise => exercise.OwnerId, null),
+            Builders<ExerciseQueryModel>.Filter.Eq(exercise => exercise.OwnerId, requestingUserId));
+
+        using var asyncCursor = await Collection.FindAsync(filter, findOptions);
         return await asyncCursor.ToListAsync();
     }
 

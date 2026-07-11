@@ -8,4 +8,5 @@ public class ExerciseUpdatedEvent(
         ExerciseId aggregateId,
         IReadOnlyCollection<MuscleGroup> muscleGroup,
         string name,
-        string description) : ExerciseBaseEvent(aggregateId, muscleGroup, name, description);
+        string description,
+        Guid? ownerId) : ExerciseBaseEvent(aggregateId, muscleGroup, name, description, ownerId);

@@ -11,7 +11,6 @@ using Forma.Infrastructure.Data.Context;
 using Forma.Infrastructure.Data.Repositories;
 using Forma.Infrastructure.Data.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Shop.Domain.Entities.CustomerAggregate;
 
 namespace Forma.Infrastructure;
 
@@ -50,6 +49,8 @@ public static class ConfigureServices
          services
             .AddScoped<IEventStoreRepository<EventStore>, EventStoreRepository>()
             .AddScoped<IExerciseWriteOnlyRepository<Exercise, ExerciseId>, ExerciseWriteOnlyRepository>()
+            .AddScoped<IExerciseResourceWriteOnlyRepository<ExerciseResource, ExerciseResourceId>, ExerciseResourceWriteOnlyRepository>()
             .AddScoped<IExerciseUniquenessChecker, ExerciseWriteOnlyRepository>()
-            .AddScoped<IExerciseResourceLinkUniquenessChecker, ExerciseWriteOnlyRepository>();
+            .AddScoped<IExerciseResourceLinkUniquenessChecker, ExerciseWriteOnlyRepository>()
+            .AddScoped<IExerciseHierarchyChecker, ExerciseWriteOnlyRepository>();
 }

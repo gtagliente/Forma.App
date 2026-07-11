@@ -32,6 +32,25 @@ internal class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
             .IsRequired() // NOT NULL
             .HasMaxLength(100);
 
+        builder
+            .Property(exercise => exercise.OwnerId);
+
+        builder
+            .Property(exercise => exercise.ParentId)
+            .HasConversion(
+                id => id.HasValue ? id.Value.Value : (Guid?)null,
+                value => value.HasValue ? new ExerciseId(value.Value) : (ExerciseId?)null);
+
+        // Self-referencing: child holds a reference to the parent's ID only (see Exercise.ParentId).
+        // Restrict, not Cascade/SetNull: FT-003 (Delete) must explicitly decide what happens when
+        // deleting an Exercise that still has children, not have it happen silently via FK behavior.
+        builder
+            .HasOne<Exercise>()
+            .WithMany()
+            .HasForeignKey(e => e.ParentId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Exercise_Parent");
+
 
         // Converter: IReadOnlyCollection<MuscleGroup> <-> "1|2|5"
         var muscleGroupConverter = new ValueConverter<IReadOnlyCollection<MuscleGroup>, string>(
@@ -74,10 +93,20 @@ internal class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Exercise_ExerciseResources");
 
+        // Name uniqueness is scoped by ownership, not global: shared-library names must be
+        // unique among themselves, and each owner's private names must be unique among that
+        // owner's own Exercises — a private name may coincide with a shared or another owner's name.
         builder
             .HasIndex(e => e.Name)
             .IsUnique()
-            .HasDatabaseName("UQ_Exercise_Name");
+            .HasFilter("[OwnerId] IS NULL")
+            .HasDatabaseName("UQ_Exercise_Name_Shared");
+
+        builder
+            .HasIndex(e => new { e.Name, e.OwnerId })
+            .IsUnique()
+            .HasFilter("[OwnerId] IS NOT NULL")
+            .HasDatabaseName("UQ_Exercise_Name_PerOwner");
     }
 
     private static string ConvertMuscleGroupsToString(IReadOnlyCollection<MuscleGroup> mem)

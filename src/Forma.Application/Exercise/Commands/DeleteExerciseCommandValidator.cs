@@ -1,12 +1,12 @@
-// using FluentValidation;
+using FluentValidation;
 
-// namespace Shop.Application.Customer.Commands;
+namespace Forma.Application.Exercise.Commands;
 
-// public class DeleteCustomerCommandValidator : AbstractValidator<DeleteCustomerCommand>
-// {
-//     public DeleteCustomerCommandValidator()
-//     {
-//         RuleFor(command => command.Id)
-//             .NotEmpty();
-//     }
-// }
+public class DeleteExerciseCommandValidator : AbstractValidator<DeleteExerciseCommand>
+{
+    public DeleteExerciseCommandValidator()
+    {
+        RuleFor(command => command.ExerciseId)
+            .NotEmpty();
+    }
+}

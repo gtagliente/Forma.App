@@ -1,5 +1,5 @@
+using Forma.Domain.Entities.ExerciseAggregate;
 using Forma.Domain.Entities.ExerciseAggregate.Contracts;
-using Shop.Domain.Entities.CustomerAggregate;
 
 namespace Forma.Domain.Builders.Contracts;
 
@@ -12,6 +12,8 @@ public interface IExerciseBuilder
         public readonly IExerciseUniquenessChecker uniquenessChecker {  get; init; }
 
         public  readonly IExerciseResourceLinkUniquenessChecker exerciseResourceLinkUniquenessChecker {  get; init; }
+
+        public readonly IExerciseHierarchyChecker hierarchyChecker { get; init; }
     }
 
 }

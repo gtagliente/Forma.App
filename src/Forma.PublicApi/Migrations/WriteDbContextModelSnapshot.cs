@@ -18,7 +18,7 @@ namespace Forma.PublicApi.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .UseCollation("Latin1_General_CI_AI")
-                .HasAnnotation("ProductVersion", "9.0.14")
+                .HasAnnotation("ProductVersion", "9.0.17")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -44,6 +44,12 @@ namespace Forma.PublicApi.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -54,9 +60,17 @@ namespace Forma.PublicApi.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("UQ_Exercise_Name");
+                        .HasDatabaseName("UQ_Exercise_Name_Shared")
+                        .HasFilter("[OwnerId] IS NULL");
 
-                    b.ToTable("Exercise", (string)null);
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("Name", "OwnerId")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_Exercise_Name_PerOwner")
+                        .HasFilter("[OwnerId] IS NOT NULL");
+
+                    b.ToTable("Exercise");
                 });
 
             modelBuilder.Entity("Forma.Domain.Entities.ExerciseAggregate.ExerciseResource", b =>
@@ -99,7 +113,7 @@ namespace Forma.PublicApi.Migrations
                         .IsUnique()
                         .HasDatabaseName("UQ_ExerciseResource_ExerciseId_ExerciseResourceId");
 
-                    b.ToTable("ExerciseResource", (string)null);
+                    b.ToTable("ExerciseResource");
                 });
 
             modelBuilder.Entity("Forma.Infrastructure.Data.Mappings.StaticValueObjects", b =>
@@ -124,7 +138,16 @@ namespace Forma.PublicApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StaticValueObjects", (string)null);
+                    b.ToTable("StaticValueObjects");
+                });
+
+            modelBuilder.Entity("Forma.Domain.Entities.ExerciseAggregate.Exercise", b =>
+                {
+                    b.HasOne("Forma.Domain.Entities.ExerciseAggregate.Exercise", null)
+                        .WithMany()
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Exercise_Parent");
                 });
 
             modelBuilder.Entity("Forma.Domain.Entities.ExerciseAggregate.ExerciseResource", b =>

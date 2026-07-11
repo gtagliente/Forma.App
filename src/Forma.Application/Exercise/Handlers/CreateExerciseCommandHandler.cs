@@ -36,7 +36,7 @@ public class CreateExerciseCommandHandler(
 
         // Creating an instance of the exercise entity.
         // When instantiated, the "ExerciseCreatedEvent" will be created.
-        var exercise = await DOMAIN_ENTITIES.ExerciseAggregate.Exercise.Create(builder, request.Name, request.MuscleGroups, request.Description);
+        var exercise = await DOMAIN_ENTITIES.ExerciseAggregate.Exercise.Create(builder, request.Name, request.MuscleGroups, request.Description, request.OwnerId, request.ParentId);
 
         // Adding the entity to the repository.
         repository.Add(exercise);

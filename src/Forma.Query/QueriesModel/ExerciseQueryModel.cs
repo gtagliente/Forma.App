@@ -12,4 +12,5 @@ public class ExerciseQueryModel : IQueryModel<Guid>
     public string Name { get;  init; }
     public IReadOnlyCollection<MuscleGroup> MuscleGroups { get;  init; }
     public string Description { get;  init; }
+    public Guid? OwnerId { get; init; }
 }

@@ -11,7 +11,8 @@ public abstract class ExerciseBaseEvent : BaseEvent
         ExerciseId aggregateId,
         IReadOnlyCollection<MuscleGroup> muscleGroups,
         string name,
-        string description
+        string description,
+        Guid? ownerId
         )
     {
         Id = Guid.NewGuid();
@@ -19,9 +20,11 @@ public abstract class ExerciseBaseEvent : BaseEvent
         MuscleGroups = muscleGroups;
         Name = name;
         Description = description;
+        OwnerId = ownerId;
     }
 
     public IReadOnlyCollection<MuscleGroup> MuscleGroups { get; private init; }
     public string Name { get; private init; }
     public string Description { get; private init; }
+    public Guid? OwnerId { get; private init; }
 }

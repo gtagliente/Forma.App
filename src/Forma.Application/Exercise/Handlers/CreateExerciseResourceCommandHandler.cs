@@ -22,6 +22,7 @@ namespace Forma.Application.Exercise.Handlers;
 public class CreateExerciseResourceCommandHandler(
     IValidator<CreateExerciseResourceCommand> validator,
     IExerciseWriteOnlyRepository<DOMAIN_ENTITIES.ExerciseAggregate.Exercise, ExerciseId> repository,
+    IExerciseResourceWriteOnlyRepository<ExerciseResource, ExerciseResourceId> exerciseResourceRepository,
     IExerciseBuilder builder,
     IUnitOfWork unitOfWork) : IRequestHandler<CreateExerciseResourceCommand, Result<CreatedExerciseResourceResponse>>
 {
@@ -50,12 +51,17 @@ public class CreateExerciseResourceCommandHandler(
             request.Type,
             request.Link);
 
+        // exercise was loaded untracked (GetByIdAsync uses AsNoTrackingWithIdentityResolution),
+        // and exerciseResource has a client-generated key already set, so repository.Update(exercise)
+        // would have EF classify it as Modified rather than Added — a DbUpdateConcurrencyException
+        // against a row that doesn't exist yet. Track the new resource explicitly instead.
+        exerciseResourceRepository.Add(exerciseResource);
+
         //Saving changes to the database and triggering events.
         await unitOfWork.SaveChangesAsync();
 
         // Returning the ID.
         return Result<CreatedExerciseResourceResponse>.Created(
             new CreatedExerciseResourceResponse(exerciseResource.Id.Value), location: $"/api/exercises/resource/{exerciseResource.Id.Value}");
-        { }
     }
 }

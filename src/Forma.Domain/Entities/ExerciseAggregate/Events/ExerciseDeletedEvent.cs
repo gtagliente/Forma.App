@@ -8,4 +8,5 @@ public class ExerciseDeletedEvent(
         ExerciseId aggregateId,
         IReadOnlyCollection<MuscleGroup> muscleGroups,
         string name,
-        string description) : ExerciseBaseEvent(aggregateId, muscleGroups, name, description);
+        string description,
+        Guid? ownerId) : ExerciseBaseEvent(aggregateId, muscleGroups, name, description, ownerId);

@@ -14,15 +14,15 @@ namespace Forma.Query.Application.Customer.Handlers;
 public class GetAllExerciseQueryHandler(IExerciseReadOnlyRepository repository, ICacheService cacheService)
     : IRequestHandler<GetAllExerciseQuery, Result<IEnumerable<ExerciseQueryModel>>>
 {
-    private const string CacheKey = nameof(GetAllExerciseQuery);
-
     public async Task<Result<IEnumerable<ExerciseQueryModel>>> Handle(
           GetAllExerciseQuery request,
           CancellationToken cancellationToken)
     {
-        // This method will either return the cached data associated with the CacheKey
-        // or create it by calling the GetAllAsync method.
+        // Cache key must be scoped per requesting user — a shared key would leak one
+        // user's private Exercises into another user's cached response.
+        var cacheKey = $"{nameof(GetAllExerciseQuery)}:{request.RequestingUserId}";
+
         return Result<IEnumerable<ExerciseQueryModel>>.Success(
-            await cacheService.GetOrCreateAsync(CacheKey, repository.GetAllAsync));
+            await cacheService.GetOrCreateAsync(cacheKey, () => repository.GetVisibleToAsync(request.RequestingUserId)));
     }
 }

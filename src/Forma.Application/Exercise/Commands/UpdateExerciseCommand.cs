@@ -1,17 +1,24 @@
-// using System;
-// using System.ComponentModel.DataAnnotations;
-// using Ardalis.Result;
-// using MediatR;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Ardalis.Result;
+using Forma.Domain.Entities.ExerciseAggregate;
+using Forma.Domain.Entities.ExerciseAggregate.ValueObjects;
+using MediatR;
 
-// namespace Shop.Application.Customer.Commands;
+namespace Forma.Application.Exercise.Commands;
 
-// public class UpdateCustomerCommand : IRequest<Result>
-// {
-//     [Required]
-//     public Guid Id { get; set; }
+public class UpdateExerciseCommand : IRequest<Result>
+{
+    [Required]
+    public ExerciseId ExerciseId { get; set; }
 
-//     [Required]
-//     [MaxLength(200)]
-//     [DataType(DataType.EmailAddress)]
-//     public string Email { get; set; }
-// }
+    [MaxLength(100)]
+    [DataType(DataType.Text)]
+    public string Name { get; set; }
+
+    [MaxLength(100)]
+    [DataType(DataType.Text)]
+    public string Description { get; set; }
+
+    public IEnumerable<MuscleGroup> MuscleGroups { get; set; }
+}

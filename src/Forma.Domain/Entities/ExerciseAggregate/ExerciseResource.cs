@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Forma.CoreContext.SharedKernel;
 using Forma.CoreContext.SharedKernel.Exceptions.DomainExceptions;
 using Forma.Domain.Builders.Contracts;
 using Forma.Domain.Entities.ExerciseAggregate.ValueObjects;
 
 namespace Forma.Domain.Entities.ExerciseAggregate;
 
-public class ExerciseResource
+public class ExerciseResource : IEntity<ExerciseResourceId>
 {
     public ExerciseResourceId Id { get; private set; }
 

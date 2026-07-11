@@ -15,30 +15,35 @@ public class Exercise : BaseEntity<ExerciseId>, IAggregateRoot
     public string Name { get; private set; } = default!;
     public string Description { get; private set; }
 
+    // Null => shared-library Exercise, visible to everyone. Non-null => private, visible only to that user.
+    public Guid? OwnerId { get; private set; }
+
+    // References another Exercise aggregate by ID only (never a loaded parent object graph).
+    public ExerciseId? ParentId { get; private set; }
+
     // internal  collection (assign only inside the aggregate)
     private List<MuscleGroup> _muscleGroups = [];
     public IReadOnlyCollection<MuscleGroup> MuscleGroups => _muscleGroups;
 
-    // Convenience property for a strongly typed ID
-    //public ExerciseId ExerciseId { get; private set; }
-
     private List<ExerciseResource> _resources = [];
-    
+
     public IReadOnlyCollection<ExerciseResource> Resources => _resources;
 
-    private Exercise(ExerciseId id, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
+    private Exercise(ExerciseId id, string name, IEnumerable<MuscleGroup> muscleGroups, string description, Guid? ownerId, ExerciseId? parentId)
         : base(id)
     {
         Name = name;
-        _muscleGroups = muscleGroups.ToList(); 
+        _muscleGroups = muscleGroups.ToList();
         Description = description;
+        OwnerId = ownerId;
+        ParentId = parentId;
     }
 
 
     private Exercise() {
     } // For EF or serialization
 
-    public static async Task<Exercise> Create(IExerciseBuilder builder, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
+    public static async Task<Exercise> Create(IExerciseBuilder builder, string name, IEnumerable<MuscleGroup> muscleGroups, string description, Guid? ownerId = null, ExerciseId? parentId = null)
     {
         if (builder == null)
             throw new DomainBadCodeException($"Required builder {nameof(builder)}");
@@ -46,7 +51,7 @@ public class Exercise : BaseEntity<ExerciseId>, IAggregateRoot
 
         if (contracts.uniquenessChecker == null)
              throw new DomainBadCodeException($"Required contract {nameof(contracts.uniquenessChecker)}");
-        if(!await contracts.uniquenessChecker.IsUniqueAsync(name))
+        if(!await contracts.uniquenessChecker.IsUniqueAsync(name, ownerId))
             throw new DomainArgumentException("An exercise with the same name already exists.");
 
         if (string.IsNullOrWhiteSpace(name))
@@ -56,9 +61,17 @@ public class Exercise : BaseEntity<ExerciseId>, IAggregateRoot
         if (muscleGroups is null || muscleGroups.Count() == 0)
             throw new DomainArgumentException("At least one muscle group must be specified.");
 
-        var exercise = new Exercise(ExerciseId.New(), name, muscleGroups, description);
+        if (parentId is not null)
+        {
+            if (contracts.hierarchyChecker == null)
+                throw new DomainBadCodeException($"Required contract {nameof(contracts.hierarchyChecker)}");
+            if (!await contracts.hierarchyChecker.ExistsAsync(parentId.Value))
+                throw new DomainArgumentException($"No exercise found by Id: {parentId}");
+        }
 
-        exercise.AddDomainEvent(new ExerciseCreatedEvent(exercise.Id, exercise.MuscleGroups, exercise.Name, exercise.Description));
+        var exercise = new Exercise(ExerciseId.New(), name, muscleGroups, description, ownerId, parentId);
+
+        exercise.AddDomainEvent(new ExerciseCreatedEvent(exercise.Id, exercise.MuscleGroups, exercise.Name, exercise.Description, exercise.OwnerId));
         return exercise;
     }
 
@@ -71,7 +84,7 @@ public class Exercise : BaseEntity<ExerciseId>, IAggregateRoot
 
         if (name is not null && name != Name)
         {
-            if (!await builder._contracts.uniquenessChecker.IsUniqueAsync(name))
+            if (!await builder._contracts.uniquenessChecker.IsUniqueAsync(name, OwnerId))
                 throw new DomainArgumentException("An exercise with the same name already exists.");
             Name = name.Trim();
             hasChanged = true;
@@ -95,7 +108,7 @@ public class Exercise : BaseEntity<ExerciseId>, IAggregateRoot
         }
 
         if (hasChanged)
-            AddDomainEvent(new ExerciseUpdatedEvent(Id, MuscleGroups, Name, Description));
+            AddDomainEvent(new ExerciseUpdatedEvent(Id, MuscleGroups, Name, Description, OwnerId));
         return hasChanged;
     }
 
@@ -125,5 +138,41 @@ public class Exercise : BaseEntity<ExerciseId>, IAggregateRoot
         _resources.Remove(resource);
         //AddDomainEvent(new ExerciseDetailRemovedEvent(ExerciseId.Value, detail.ExerciseDetailId.Value));
         return true;
+    }
+
+    public async Task SetParent(IExerciseBuilder builder, ExerciseId parentId)
+    {
+        if (builder == null)
+            throw new DomainBadCodeException($"Required builder {nameof(builder)}");
+        var checker = builder._contracts.hierarchyChecker;
+        if (checker == null)
+            throw new DomainBadCodeException($"Required contract {nameof(builder._contracts.hierarchyChecker)}");
+
+        if (parentId == Id)
+            throw new DomainArgumentException("An exercise cannot be its own parent.");
+
+        if (!await checker.ExistsAsync(parentId))
+            throw new DomainArgumentException($"No exercise found by Id: {parentId}");
+
+        if (await checker.WouldCreateCycleAsync(Id, parentId))
+            throw new DomainArgumentException("Assigning this parent would create a cycle in the exercise hierarchy.");
+
+        ParentId = parentId;
+    }
+
+    public void ClearParent() => ParentId = null;
+
+    public async Task Delete(IExerciseBuilder builder)
+    {
+        if (builder == null)
+            throw new DomainBadCodeException($"Required builder {nameof(builder)}");
+        var checker = builder._contracts.hierarchyChecker;
+        if (checker == null)
+            throw new DomainBadCodeException($"Required contract {nameof(builder._contracts.hierarchyChecker)}");
+
+        if (await checker.HasChildrenAsync(Id))
+            throw new DomainArgumentException("Cannot delete an exercise that has children in the hierarchy.");
+
+        AddDomainEvent(new ExerciseDeletedEvent(Id, MuscleGroups, Name, Description, OwnerId));
     }
 }

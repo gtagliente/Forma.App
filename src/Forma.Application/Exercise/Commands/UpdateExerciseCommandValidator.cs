@@ -1,17 +1,20 @@
-// using FluentValidation;
+using FluentValidation;
 
-// namespace Shop.Application.Customer.Commands;
+namespace Forma.Application.Exercise.Commands;
 
-// public class UpdateCustomerCommandValidator : AbstractValidator<UpdateCustomerCommand>
-// {
-//     public UpdateCustomerCommandValidator()
-//     {
-//         RuleFor(command => command.Id)
-//             .NotEmpty();
+public class UpdateExerciseCommandValidator : AbstractValidator<UpdateExerciseCommand>
+{
+    public UpdateExerciseCommandValidator()
+    {
+        RuleFor(command => command.ExerciseId)
+            .NotEmpty();
 
-//         RuleFor(command => command.Email)
-//             .NotEmpty()
-//             .MaximumLength(254)
-//             .EmailAddress();
-//     }
-// }
+        RuleFor(command => command.Name)
+            .MaximumLength(100)
+            .When(command => command.Name is not null);
+
+        RuleFor(command => command.Description)
+            .MaximumLength(100)
+            .When(command => command.Description is not null);
+    }
+}
