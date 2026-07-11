@@ -55,6 +55,10 @@ public class ExercisesControllerTests : BaseIntegrationTest
     [Fact]
     public async Task Should_ReturnsHttpStatus201Created_When_Post_ValidRequest()
     {
+        await WriteDbContextExecuteRawSql(@"
+            DELETE FROM Exercise;
+        ");
+
         using var httpClient = factory.CreateClient(CreateClientOptions());
 
         var command = new Faker<CreateExerciseCommand>()
