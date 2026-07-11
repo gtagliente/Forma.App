@@ -18,13 +18,11 @@ internal class ExerciseConfiguration : IEntityTypeConfiguration<Exercise>
     {
         //TODO: rifattorizzare con baseentity e typed id passato tramite Generics
         builder
-            .ConfigureBaseEntity();
+            .ConfigureBaseEntity<Exercise,ExerciseId>();
 
+      
         builder
-            .HasKey(e => e.ExerciseId);
-
-        builder
-            .Property(entity => entity.ExerciseId)
+            .Property(entity => entity.Id)
             .HasConversion(e => e.Value, value => new(value))
             .IsRequired()
             .ValueGeneratedNever();

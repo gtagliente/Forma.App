@@ -11,7 +11,7 @@ namespace Forma.Domain.Entities.ExerciseAggregate;
 
 public class ExerciseResource
 {
-    public ExerciseResourceId ExerciseResourceId { get; private set; }
+    public ExerciseResourceId Id { get; private set; }
 
     public ExerciseId ExerciseId { get; private set; }
 
@@ -29,7 +29,7 @@ public class ExerciseResource
 
     private ExerciseResource(ExerciseResourceId exerciseResourceId, ExerciseId exerciseId, string title, string content, ResourceType type, string link)
     {
-        ExerciseResourceId = exerciseResourceId;
+        Id = exerciseResourceId;
         ExerciseId = exerciseId;
         Title = title;
         Content = content;

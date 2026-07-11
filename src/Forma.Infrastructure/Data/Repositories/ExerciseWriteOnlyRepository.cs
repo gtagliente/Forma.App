@@ -13,7 +13,7 @@ using Shop.Domain.Entities.CustomerAggregate;
 namespace Forma.Infrastructure.Data.Repositories;
 
 internal class ExerciseWriteOnlyRepository(WriteDbContext dbContext)
-    : BaseWriteOnlyRepository<Exercise, Guid>(dbContext), IExerciseWriteOnlyRepository<Exercise, Guid>, IExerciseUniquenessChecker, IExerciseResourceLinkUniquenessChecker
+    : BaseWriteOnlyRepository<Exercise, ExerciseId>(dbContext), IExerciseWriteOnlyRepository<Exercise, ExerciseId>, IExerciseUniquenessChecker, IExerciseResourceLinkUniquenessChecker
 {
     public async Task<bool> IsUniqueAsync(string name)
     {

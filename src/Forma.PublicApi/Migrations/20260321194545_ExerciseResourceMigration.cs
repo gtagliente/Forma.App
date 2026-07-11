@@ -11,27 +11,11 @@ namespace Forma.PublicApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Exercise",
-                table: "Exercise");
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "ExerciseId",
-                table: "Exercise",
-                type: "uniqueidentifier",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Exercise",
-                table: "Exercise",
-                column: "ExerciseId");
-
             migrationBuilder.CreateTable(
                 name: "ExerciseResource",
                 columns: table => new
                 {
-                    ExerciseResourceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ExerciseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     Content = table.Column<string>(type: "varchar(1000)", unicode: false, maxLength: 1000, nullable: true),
@@ -40,12 +24,12 @@ namespace Forma.PublicApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExerciseResource", x => x.ExerciseResourceId);
+                    table.PrimaryKey("PK_ExerciseResource", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Exercise_ExerciseResources",
                         column: x => x.ExerciseId,
                         principalTable: "Exercise",
-                        principalColumn: "ExerciseId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -58,7 +42,7 @@ namespace Forma.PublicApi.Migrations
             migrationBuilder.CreateIndex(
                 name: "UQ_ExerciseResource_ExerciseId_ExerciseResourceId",
                 table: "ExerciseResource",
-                columns: new[] { "ExerciseId", "ExerciseResourceId" },
+                columns: new[] { "ExerciseId", "Id" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -74,22 +58,9 @@ namespace Forma.PublicApi.Migrations
             migrationBuilder.DropTable(
                 name: "ExerciseResource");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Exercise",
-                table: "Exercise");
-
             migrationBuilder.DropIndex(
                 name: "UQ_Exercise_Name",
                 table: "Exercise");
-
-            migrationBuilder.DropColumn(
-                name: "ExerciseId",
-                table: "Exercise");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Exercise",
-                table: "Exercise",
-                column: "Id");
         }
     }
 }

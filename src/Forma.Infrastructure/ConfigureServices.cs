@@ -49,7 +49,7 @@ public static class ConfigureServices
     public static IServiceCollection AddWriteOnlyRepositories(this IServiceCollection services) =>
          services
             .AddScoped<IEventStoreRepository<EventStore>, EventStoreRepository>()
-            .AddScoped<IExerciseWriteOnlyRepository<Exercise, Guid>, ExerciseWriteOnlyRepository>()
+            .AddScoped<IExerciseWriteOnlyRepository<Exercise, ExerciseId>, ExerciseWriteOnlyRepository>()
             .AddScoped<IExerciseUniquenessChecker, ExerciseWriteOnlyRepository>()
             .AddScoped<IExerciseResourceLinkUniquenessChecker, ExerciseWriteOnlyRepository>();
 }

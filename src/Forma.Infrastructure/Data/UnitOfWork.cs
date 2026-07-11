@@ -10,6 +10,7 @@ using Forma.CoreInfrastructure.Extensions;
 using Forma.CoreContext.SharedKernel;
 using Forma.Infrastructure.Data.Context;
 using Forma.CoreInfrastructure.Abstractions;
+using Forma.Domain.Entities.ExerciseAggregate;
 
 namespace Forma.Infrastructure.Data;
 
@@ -77,7 +78,7 @@ internal sealed class UnitOfWork(
         // Get all domain entities with pending domain events
         var domainEntities = writeDbContext
             .ChangeTracker
-            .Entries<BaseEntity>()
+            .Entries<IBaseEntity>()
             .Where(entry => entry.Entity.DomainEvents.Any())
             .ToList();
 

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Forma.CoreContext.SharedKernel;
+using System;
 
 namespace Forma.Infrastructure.Data.Extensions;
 
@@ -10,8 +11,8 @@ internal static class EntityTypeBuilderExtensions
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="builder">The entity type builder.</param>
-    internal static void ConfigureBaseEntity<TEntity>(this EntityTypeBuilder<TEntity> builder)
-        where TEntity : BaseEntity
+    internal static void ConfigureBaseEntity<TEntity,TKey>(this EntityTypeBuilder<TEntity> builder)
+        where TEntity : BaseEntity<TKey> where TKey : IEquatable<TKey>
     {
         // Sets the primary key for the entity to the Id property.
         builder

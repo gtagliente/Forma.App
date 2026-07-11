@@ -7,20 +7,21 @@ namespace Forma.CoreContext.SharedKernel;
 /// <summary>
 /// Represents an abstract base entity class.
 /// </summary>
-public abstract class BaseEntity : IEntity<Guid>
+public abstract class BaseEntity<TKey> : IBaseEntity,IEntity<TKey>
+     where TKey : IEquatable<TKey>
 {
     private readonly List<BaseEvent> _domainEvents = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseEntity"/> class.
     /// </summary>
-    protected BaseEntity() => Id = Guid.NewGuid();
+    protected BaseEntity() => Id = default;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseEntity"/> class with the specified identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity.</param>
-    protected BaseEntity(Guid id) => Id = id;
+    protected BaseEntity(TKey id) => Id = id;
 
     [Timestamp]
     public byte[] RowVersion { get; set; } = new byte[0];
@@ -28,13 +29,13 @@ public abstract class BaseEntity : IEntity<Guid>
     /// <summary>
     /// Gets the domain events associated with this entity.
     /// </summary>
-    public IEnumerable<BaseEvent> DomainEvents =>
+    public IReadOnlyCollection<BaseEvent> DomainEvents =>
         _domainEvents.AsReadOnly();
 
     /// <summary>
     /// Gets the unique identifier of this entity.
     /// </summary>
-    public Guid Id { get; private init; }
+    public TKey Id { get; private init; }
 
     /// <summary>
     /// Adds a domain event to the entity.

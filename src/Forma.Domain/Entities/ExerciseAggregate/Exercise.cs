@@ -10,7 +10,7 @@ using Forma.Domain.Entities.ExerciseAggregate.ValueObjects;
 
 namespace Forma.Domain.Entities.ExerciseAggregate;
 
-public class Exercise : BaseEntity, IAggregateRoot
+public class Exercise : BaseEntity<ExerciseId>, IAggregateRoot
 {
     public string Name { get; private set; } = default!;
     public string Description { get; private set; }
@@ -20,13 +20,13 @@ public class Exercise : BaseEntity, IAggregateRoot
     public IReadOnlyCollection<MuscleGroup> MuscleGroups => _muscleGroups;
 
     // Convenience property for a strongly typed ID
-    public ExerciseId ExerciseId { get; private set; }
+    //public ExerciseId ExerciseId { get; private set; }
 
     private List<ExerciseResource> _resources = [];
     
     public IReadOnlyCollection<ExerciseResource> Resources => _resources;
 
-    private Exercise(Guid id, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
+    private Exercise(ExerciseId id, string name, IEnumerable<MuscleGroup> muscleGroups, string description)
         : base(id)
     {
         Name = name;
@@ -56,9 +56,9 @@ public class Exercise : BaseEntity, IAggregateRoot
         if (muscleGroups is null || muscleGroups.Count() == 0)
             throw new DomainArgumentException("At least one muscle group must be specified.");
 
-        var exercise = new Exercise(Guid.NewGuid(), name, muscleGroups, description);
+        var exercise = new Exercise(ExerciseId.New(), name, muscleGroups, description);
 
-        exercise.AddDomainEvent(new ExerciseCreatedEvent(exercise.ExerciseId.Value, exercise.MuscleGroups, exercise.Name, exercise.Description));
+        exercise.AddDomainEvent(new ExerciseCreatedEvent(exercise.Id, exercise.MuscleGroups, exercise.Name, exercise.Description));
         return exercise;
     }
 
@@ -95,7 +95,7 @@ public class Exercise : BaseEntity, IAggregateRoot
         }
 
         if (hasChanged)
-            AddDomainEvent(new ExerciseUpdatedEvent(ExerciseId.Value, MuscleGroups, Name, Description));
+            AddDomainEvent(new ExerciseUpdatedEvent(Id, MuscleGroups, Name, Description));
         return hasChanged;
     }
 
@@ -111,7 +111,7 @@ public class Exercise : BaseEntity, IAggregateRoot
             )
             throw new DomainArgumentException("A resource with the same link already exists for this exercise.");
 
-        var resource = ExerciseResource.Create(builder, ExerciseId, title, content, type, link);
+        var resource = ExerciseResource.Create(builder, Id, title, content, type, link);
         _resources.Add(resource);
         //AddDomainEvent(new ExerciseDetailAddedEvent(ExerciseId.Value, detail.ExerciseDetailId.Value, detail.Title, detail.Type, detail.Link));
         return resource;
@@ -119,7 +119,7 @@ public class Exercise : BaseEntity, IAggregateRoot
 
     public async Task<bool> RemoveResource(ExerciseResourceId detailId)
     {
-        var resource = _resources.FirstOrDefault(d => d.ExerciseResourceId == detailId);
+        var resource = _resources.FirstOrDefault(d => d.Id == detailId);
         if (resource == null)
             return false;
         _resources.Remove(resource);
