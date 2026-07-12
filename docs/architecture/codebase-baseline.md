@@ -1,6 +1,6 @@
 # exercise-service — Codebase Baseline
 
-_Reconnaissance pass over `src/` before running any feature through `../agents/process.md`. Read this before re-exploring the codebase in a future session — only re-read source directly if this looks stale or a specific detail isn't covered here._
+_Reconnaissance pass over `src/` before running any feature through this repo's local pipeline (`../../.claude/agents/`). Read this before re-exploring the codebase in a future session — only re-read source directly if this looks stale or a specific detail isn't covered here._
 
 ## Solution shape
 
@@ -41,7 +41,7 @@ _As found at the start of this pass, kept for history:_ `IExerciseUniquenessChec
 
 _As found_: `Exercise.Update(...)` was already implemented and functionally complete; `Exercise` had no `Delete()`; the Application/API layers were entirely stubbed out.
 
-**Now**: full CRUD wired end-to-end — `Exercise.Delete(builder)` added (blocks via `IExerciseHierarchyChecker.HasChildrenAsync` before raising `ExerciseDeletedEvent`), `UpdateExerciseCommand`/`DeleteExerciseCommand` + handlers + controller routes (`PUT /api/exercises/Update`, `DELETE /api/exercises/{id:guid}`) all live. See `../features/FT-003-update-delete/`.
+**Now**: full CRUD wired end-to-end — `Exercise.Delete(builder)` added (blocks via `IExerciseHierarchyChecker.HasChildrenAsync` before raising `ExerciseDeletedEvent`), `UpdateExerciseCommand`/`DeleteExerciseCommand` + handlers + controller routes (`PUT /api/exercises/Update`, `DELETE /api/exercises/{id:guid}`) all live. See `../features/FT-003-update-delete.md`.
 
 ## Persistence / migrations
 
@@ -49,4 +49,4 @@ Migrations live under `Forma.PublicApi/Migrations/` (write side) and `Forma.Publ
 
 ## Status
 
-First pass, written while starting Feature 1 (Ownership/Visibility) of the feature pipeline (`../agents/process.md`). Update this file when a later pass finds it stale, rather than re-deriving all of the above from scratch.
+First pass, written while starting Feature 1 (Ownership/Visibility) of the feature pipeline (`../../.claude/agents/`). Update this file when a later pass finds it stale, rather than re-deriving all of the above from scratch.

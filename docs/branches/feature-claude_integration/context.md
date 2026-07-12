@@ -10,4 +10,4 @@ Documentation only. No feature code was written on this branch; the pre-existing
 
 ## Status
 
-`docs/` and `CLAUDE.md` bootstrapped. Not yet done: reviewing the inherited `Forma.App` code against the new pipeline (`../../agents/process.md`) and populating `../../engineering/` accordingly.
+`docs/` and `CLAUDE.md` bootstrapped. Not yet done: reviewing the inherited `Forma.App` code against the new pipeline (`../../../.claude/agents/`) and populating `../../engineering/` accordingly.

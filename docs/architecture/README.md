@@ -11,8 +11,8 @@ This service's internal architecture: how `docs/product/domain-slice.md`'s conce
 
 ## What does NOT belong here
 
-- Decisions that affect another service, cross-service APIs/events, or system-wide architecture → promote to `Forma.Claude`'s `docs/architecture/adr/` instead (same Context Promotion Rule `Forma.Claude` uses). The Central Architect gate (see `../agents/process.md`) is what catches this before merge.
+- Decisions that affect another service, cross-service APIs/events, or system-wide architecture → promote to `Forma.Claude`'s `docs/architecture/adr/` instead (same Context Promotion Rule `Forma.Claude` uses). The Central Architect gate (see `../../.claude/agents/`) is what catches this before merge.
 
 ## Current state
 
-Empty. No feature has gone through the pipeline yet, so no internal architecture or local ADRs exist. The inherited code under `../../src/` (from `Forma.App`) has not yet been documented here.
+`adr/ADR-001-strongly-typed-exercise-id.md` (local decision) and `codebase-baseline.md` (reconnaissance notes on the inherited `Forma.App` code) exist. Three features have gone through the pipeline (`../features/`).

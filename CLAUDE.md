@@ -15,7 +15,7 @@ It has its own independent datastore (no shared database with other services) an
 
 ## How work happens here
 
-Unlike `Forma.Claude` (analysis-only, no code), this repository is where `exercise-service` actually gets built. Work follows a five-stage pipeline instead of the system-wide Analyst→Architect→Challenger loop — see `docs/agents/process.md` for the full description:
+Unlike `Forma.Claude` (analysis-only, no code), this repository is where `exercise-service` actually gets built. Work follows a five-stage pipeline instead of the system-wide Analyst→Architect→Challenger loop:
 
 ```
 Service Analyst
@@ -33,7 +33,7 @@ Central Architect gate (Forma.Claude) — cross-service impact
 Merge
 ```
 
-Each role's responsibilities and boundaries are defined in `docs/agents/`.
+Each role's responsibilities and boundaries are defined as live Claude Code subagents in `.claude/agents/` (`service-analyst`, `service-architect`, `backend-developer`) — invoke them directly rather than reading a separate context doc.
 
 ## Current status
 

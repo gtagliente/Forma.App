@@ -27,7 +27,7 @@ public class CreateExerciseCommand : IRequest<Result<CreatedExerciseResponse>>
     /// <summary>
     /// Null creates a shared-library Exercise (visible to everyone).
     /// Non-null creates a private Exercise owned by that user (visible only to them).
-    /// No auth exists yet, so this is caller-supplied — see FT-001-ownership-visibility/design.md.
+    /// No auth exists yet, so this is caller-supplied — see docs/features/FT-001-ownership-visibility.md (Design section).
     /// </summary>
     public Guid? OwnerId { get; set; }
 

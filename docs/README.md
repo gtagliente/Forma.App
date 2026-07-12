@@ -2,14 +2,13 @@
 
 ## Purpose
 
-Knowledge base for `exercise-service` — scoped to this one service only. Mirrors the top-level shape of `Forma.Claude`'s `docs/` (product, architecture, engineering, agents, features, branches), but everything here is specific to this service; nothing here is system-wide.
+Knowledge base for `exercise-service` — scoped to this one service only. Mirrors the top-level shape of `Forma.Claude`'s `docs/` (product, architecture, engineering, features, branches), but everything here is specific to this service; nothing here is system-wide. Agent role definitions live outside `docs/`, as live Claude Code subagents in `../.claude/agents/`.
 
 ## Structure
 
 - `product/` — this service's slice of the domain model. **Not authoritative** — see `product/README.md`.
 - `architecture/` — this service's internal architecture and locally-scoped ADRs.
 - `engineering/` — coding standards, git workflow, testing strategy, devops for this service's codebase.
-- `agents/` — the feature development pipeline used in this repo (Service Analyst → Service Architect → Backend Developer → review → Central Architect gate).
 - `features/` — feature-level work tracked within this service.
 - `branches/` — branch-scoped, temporary context for this repo's own git branches.
 
