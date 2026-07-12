@@ -14,6 +14,8 @@ public interface IExerciseBuilder
         public  readonly IExerciseResourceLinkUniquenessChecker exerciseResourceLinkUniquenessChecker {  get; init; }
 
         public readonly IExerciseHierarchyChecker hierarchyChecker { get; init; }
+
+        public readonly IExerciseUsageChecker usageChecker { get; init; }
     }
 
 }

@@ -42,3 +42,7 @@ Each role's responsibilities and boundaries are defined as live Claude Code suba
 ## Architecure
 
 The architecture in high level is described in the ./docs/architecture/codebase-baseline.md read this for taking context
+
+## Engineering
+
+Here you can find the contract exposed via rest api openapi.json

@@ -87,25 +87,26 @@ public class ExercisesController(IMediator mediator) : ControllerBase
         (await mediator.Send(new DeleteExerciseCommand(new ExerciseId(id)))).ToActionResult();
 
     ///////////////////////////
-    // GET: /api/customers/{id}
+    // GET: /api/exercises/{id}
     ///////////////////////////
 
-    ///// <summary>
-    ///// Gets the client by Id.
-    ///// </summary>
-    ///// <response code="200">Returns the client.</response>
-    ///// <response code="400">Returns list of errors if the request is invalid.</response>
-    ///// <response code="404">When no client is found by the given Id.</response>
-    ///// <response code="500">When an unexpected internal error occurs on the server.</response>
-    //[HttpGet("{id:guid}")]
-    //[Consumes(MediaTypeNames.Application.Json)]
-    //[Produces(MediaTypeNames.Application.Json)]
-    //[ProducesResponseType(typeof(ApiResponse<CustomerQueryModel>), StatusCodes.Status200OK)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    //[ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
-    //public async Task<IActionResult> GetById([Required] Guid id) =>
-    //    (await mediator.Send(new GetCustomerByIdQuery(id))).ToActionResult();
+    /// <summary>
+    /// Gets an Exercise by Id. Also backs ADR-006 Rule 1 (Exercise-existence check at Workout
+    /// create/edit) once consumed by training-planning-service.
+    /// </summary>
+    /// <response code="200">Returns the exercise.</response>
+    /// <response code="400">Returns list of errors if the request is invalid.</response>
+    /// <response code="404">When no exercise is found by the given Id.</response>
+    /// <response code="500">When an unexpected internal error occurs on the server.</response>
+    [HttpGet("{id:guid}")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ApiResponse<ExerciseQueryModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetById([Required] Guid id) =>
+        (await mediator.Send(new GetExerciseByIdQuery(id))).ToActionResult();
 
     //////////////////////
     // GET: /api/customers

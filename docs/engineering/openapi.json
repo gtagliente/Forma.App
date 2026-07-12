@@ -1,0 +1,938 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Forma.PublicApi | v1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:7225/"
+    }
+  ],
+  "paths": {
+    "/api/exercises/create": {
+      "post": {
+        "tags": [
+          "Exercises"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExerciseCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExerciseCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfCreatedExerciseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exercises/update": {
+      "put": {
+        "tags": [
+          "Exercises"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExerciseCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExerciseCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exercises/{id}": {
+      "get": {
+        "tags": [
+          "Exercises"
+        ],
+        "summary": "Also backs ADR-006 Rule 1 (Exercise-existence check at Workout create/edit) once consumed by training-planning-service. Hand-authored against the live controller (Forma.PublicApi/Controllers/v1/ExercisesController.cs) — regenerate from a running instance once available to confirm exact shape.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfExerciseQueryModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Exercises"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exercises/getall": {
+      "get": {
+        "tags": [
+          "Exercises"
+        ],
+        "parameters": [
+          {
+            "name": "requestingUserId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfIEnumerableOfExerciseQueryModel"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exercises/createexerciseresource": {
+      "post": {
+        "tags": [
+          "Exercises"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExerciseResourceCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExerciseResourceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfCreatedExerciseResourceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exercises/setparent": {
+      "post": {
+        "tags": [
+          "Exercises"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetExerciseParentCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetExerciseParentCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exercises/clearparent": {
+      "post": {
+        "tags": [
+          "Exercises"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearExerciseParentCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearExerciseParentCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiErrorResponse": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponse": {
+        "required": [
+          "success",
+          "successMessage",
+          "statusCode",
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "successMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorResponse"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponseOfCreatedExerciseResourceResponse": {
+        "required": [
+          "result",
+          "success",
+          "successMessage",
+          "statusCode",
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/CreatedExerciseResourceResponse"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "successMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorResponse"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponseOfCreatedExerciseResponse": {
+        "required": [
+          "result",
+          "success",
+          "successMessage",
+          "statusCode",
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/CreatedExerciseResponse"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "successMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorResponse"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponseOfExerciseQueryModel": {
+        "required": [
+          "result",
+          "success",
+          "successMessage",
+          "statusCode",
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ExerciseQueryModel"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "successMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorResponse"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponseOfIEnumerableOfExerciseQueryModel": {
+        "required": [
+          "result",
+          "success",
+          "successMessage",
+          "statusCode",
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExerciseQueryModel"
+            },
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "successMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorResponse"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "ClearExerciseParentCommand": {
+        "required": [
+          "exerciseId"
+        ],
+        "type": "object",
+        "properties": {
+          "exerciseId": {
+            "$ref": "#/components/schemas/ExerciseId"
+          }
+        }
+      },
+      "CreatedExerciseResourceResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "nullable": true
+      },
+      "CreatedExerciseResponse": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "nullable": true
+      },
+      "CreateExerciseCommand": {
+        "required": [
+          "name",
+          "description",
+          "muscleGroups"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "muscleGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MuscleGroup"
+            },
+            "nullable": true
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "parentId": {
+            "$ref": "#/components/schemas/NullableOfExerciseId"
+          }
+        }
+      },
+      "CreateExerciseResourceCommand": {
+        "required": [
+          "exerciseId",
+          "title",
+          "type",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "exerciseId": {
+            "$ref": "#/components/schemas/ExerciseId"
+          },
+          "title": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "content": {
+            "maxLength": 1000,
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/ResourceType"
+          },
+          "link": {
+            "maxLength": 400,
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ExerciseId": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ExerciseQueryModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "muscleGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MuscleGroup"
+            },
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        }
+      },
+      "MuscleGroup": {
+        "enum": [
+          "Chest",
+          "Back",
+          "Legs",
+          "Shoulders",
+          "Arms",
+          "Core",
+          "FullBody"
+        ]
+      },
+      "NullableOfExerciseId": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "nullable": true
+      },
+      "ResourceType": {
+        "enum": [
+          "Video",
+          "Image",
+          "Text",
+          "Uri"
+        ]
+      },
+      "SetExerciseParentCommand": {
+        "required": [
+          "exerciseId",
+          "parentId"
+        ],
+        "type": "object",
+        "properties": {
+          "exerciseId": {
+            "$ref": "#/components/schemas/ExerciseId"
+          },
+          "parentId": {
+            "$ref": "#/components/schemas/ExerciseId"
+          }
+        }
+      },
+      "UpdateExerciseCommand": {
+        "required": [
+          "exerciseId"
+        ],
+        "type": "object",
+        "properties": {
+          "exerciseId": {
+            "$ref": "#/components/schemas/ExerciseId"
+          },
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "muscleGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MuscleGroup"
+            },
+            "nullable": true
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Exercises"
+    }
+  ]
+}

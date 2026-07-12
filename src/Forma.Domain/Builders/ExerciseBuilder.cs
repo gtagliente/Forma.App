@@ -6,12 +6,13 @@ internal class ExerciseBuilder : IExerciseBuilder
 {
     public IExerciseBuilder.Contracts _contracts {  get; init; }
 
-    public ExerciseBuilder(IExerciseUniquenessChecker uniquenessChecker, IExerciseResourceLinkUniquenessChecker exerciseResourceLinkUniquenessChecker, IExerciseHierarchyChecker hierarchyChecker)
+    public ExerciseBuilder(IExerciseUniquenessChecker uniquenessChecker, IExerciseResourceLinkUniquenessChecker exerciseResourceLinkUniquenessChecker, IExerciseHierarchyChecker hierarchyChecker, IExerciseUsageChecker usageChecker)
     {
         _contracts = new() {
             uniquenessChecker = uniquenessChecker,
             exerciseResourceLinkUniquenessChecker = exerciseResourceLinkUniquenessChecker,
-            hierarchyChecker = hierarchyChecker
+            hierarchyChecker = hierarchyChecker,
+            usageChecker = usageChecker
         };
     }
 }

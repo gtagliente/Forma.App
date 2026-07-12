@@ -173,6 +173,15 @@ public class Exercise : BaseEntity<ExerciseId>, IAggregateRoot
         if (await checker.HasChildrenAsync(Id))
             throw new DomainArgumentException("Cannot delete an exercise that has children in the hierarchy.");
 
+        // ADR-006 Rule 2: cross-service check against training-planning-service, fail-closed —
+        // the adapter behind this contract treats an inconclusive answer as "referenced" too.
+        var usageChecker = builder._contracts.usageChecker;
+        if (usageChecker == null)
+            throw new DomainBadCodeException($"Required contract {nameof(builder._contracts.usageChecker)}");
+
+        if (await usageChecker.IsReferencedByAnyWorkoutAsync(Id))
+            throw new DomainArgumentException("Cannot delete an exercise that is still referenced by a Workout.");
+
         AddDomainEvent(new ExerciseDeletedEvent(Id, MuscleGroups, Name, Description, OwnerId));
     }
 }
