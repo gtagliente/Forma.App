@@ -37,7 +37,7 @@ Each role's responsibilities and boundaries are defined as live Claude Code suba
 
 ## Current status
 
-`docs/` just bootstrapped (product domain slice, architecture placeholder, engineering placeholder, agents pipeline, features placeholder, branch context for `feature/claude_integration`). No feature has gone through the pipeline yet. Existing code (`src/`, `tests/`) predates this reorganization — it came from `Forma.App`, the earlier single-codebase effort this service is being split out of; nothing there has been reviewed against the pipeline yet.
+`docs/` just bootstrapped (product domain slice, architecture placeholder, engineering placeholder, agents pipeline, features placeholder). No feature has gone through the pipeline yet. Existing code (`src/`, `tests/`) predates this reorganization — it came from `Forma.App`, the earlier single-codebase effort this service is being split out of; nothing there has been reviewed against the pipeline yet.
 
 ## Architecure
 
