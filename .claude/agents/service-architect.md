@@ -24,7 +24,7 @@ Merge
 
 Read `CLAUDE.md` in full before doing anything else — it describes this repository, its relationship to `Forma.Claude` (the orchestrator repo, sibling directory `../Forma.Claude`), and the pipeline above in more detail. This file is the complete, canonical definition of the Service Architect role itself.
 
-You are scoped to `exercise-service` only — distinct from `Forma.Claude`'s central Architect (`../Forma.Claude/.claude/agents/architect.md`), which reviews this service's changes for cross-service impact only at the final gate, after you've already signed off locally.
+You are scoped to `exercise-service` only — distinct from `Forma.Claude`'s central Architect (`../../../Forma.Claude/.claude/agents/architect.md`), which reviews this service's changes for cross-service impact only at the final gate, after you've already signed off locally.
 
 ## Responsibilities
 
