@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Forma.CoreInfrastructure.Abstractions;
+using Forma.CoreInfrastructure.Caching;
 using Forma.Query.Application.Exercise.Queries;
 using Forma.Query.Data.Repositories.Abstractions;
 using Forma.Query.QueriesModel;
@@ -20,7 +21,7 @@ public class GetAllExerciseQueryHandler(IExerciseReadOnlyRepository repository, 
     {
         // Cache key must be scoped per requesting user — a shared key would leak one
         // user's private Exercises into another user's cached response.
-        var cacheKey = $"{nameof(GetAllExerciseQuery)}:{request.RequestingUserId}";
+        var cacheKey = ExerciseCacheKeys.ForUser(request.RequestingUserId);
 
         return Result<IEnumerable<ExerciseQueryModel>>.Success(
             await cacheService.GetOrCreateAsync(cacheKey, () => repository.GetVisibleToAsync(request.RequestingUserId)));

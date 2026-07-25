@@ -2,9 +2,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Forma.CoreInfrastructure.Abstractions;
+using Forma.CoreInfrastructure.Caching;
 using Forma.Domain.Entities.ExerciseAggregate.Events;
 using Forma.Query.Abstractions;
-using Forma.Query.Application.Exercise.Queries;
 using Forma.Query.QueriesModel;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -49,8 +49,11 @@ public class ExerciseEventHandler(
 
     private async Task ClearCacheAsync(ExerciseBaseEvent @event)
     {
-        var cacheKeys = new[] { nameof(GetAllExerciseQuery)};
-        await cacheService.RemoveAsync(cacheKeys);
+        // Cheap redundant complement to the load-bearing fix in the command handlers (which
+        // always know the real acting user) — this scopes invalidation to the Exercise's own
+        // OwnerId (null for shared Exercises, which correctly targets the shared-library cache
+        // entry shared by every anonymous/unauthenticated GetAll caller).
+        await cacheService.RemoveAsync(ExerciseCacheKeys.ForUser(@event.OwnerId));
     }
 
     private void LogEvent<TEvent>(TEvent @event) where TEvent : class =>

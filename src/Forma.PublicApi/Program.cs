@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO.Compression;
+using System.Text;
 using Asp.Versioning;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
@@ -8,6 +9,7 @@ using FluentValidation;
 using FluentValidation.Resources;
 using Forma.Application;
 using Forma.CoreInfrastructure;
+using Forma.CoreInfrastructure.AppSettings;
 using Forma.CoreInfrastructure.Extensions;
 using Forma.Domain;
 using Forma.Infrastructure;
@@ -15,6 +17,7 @@ using Forma.PublicApi.Extensions;
 using Forma.PublicApi.Middlewares;
 using Forma.Query;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -24,6 +27,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using StackExchange.Profiling;
 
@@ -77,10 +81,31 @@ builder.Services
     .AddReadDbContext()
     .AddReadOnlyRepositories()
     .AddCacheService(builder.Configuration)
+    .AddCurrentUserAccessor()
     .AddHealthChecks(builder.Configuration)
     .AddDefaultCorrelationId();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// JWT Bearer authentication — validates tokens issued by identity-service's fastapi-users
+// JWTStrategy (HS256, shared secret). See ADR-007-jwt-bearer-authentication.md.
+var jwtOptions = builder.Configuration.GetOptions<JwtOptions>();
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(bearerOptions =>
+    {
+        bearerOptions.MapInboundClaims = false;
+        bearerOptions.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtSigningKey)),
+            ValidateIssuer = false,
+            ValidateAudience = true,
+            ValidAudience = "fastapi-users:auth",
+            ValidateLifetime = true
+        };
+    });
+builder.Services.AddAuthorization();
 
 // MiniProfiler for .NET
 // https://miniprofiler.com/dotnet/

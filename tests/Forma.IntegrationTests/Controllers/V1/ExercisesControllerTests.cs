@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,12 +60,13 @@ public class ExercisesControllerTests : BaseIntegrationTest
             DELETE FROM Exercise;
         ");
 
-        using var httpClient = factory.CreateClient(CreateClientOptions());
+        using var httpClient = CreateAuthenticatedClient();
 
         var command = new Faker<CreateExerciseCommand>()
             .RuleFor(command => command.Name, "Pull Up")
             .RuleFor(command => command.Description, faker => faker.Lorem.Sentence(10))
             .RuleFor(command => command.MuscleGroups, faker => new List<MuscleGroup>(){ MuscleGroup.Shoulders, MuscleGroup.Back}.ToArray() )
+            .RuleFor(command => command.Shared, true)
             .Generate();
 
         // Act
@@ -88,12 +90,13 @@ public class ExercisesControllerTests : BaseIntegrationTest
         ");
         // Arrange
         //await using var webApplicationFactory = InitializeWebAppFactory();
-        using var httpClient = factory.CreateClient(CreateClientOptions());
+        using var httpClient = CreateAuthenticatedClient();
 
         var command = new Faker<CreateExerciseCommand>()
             .RuleFor(command => command.Name, "Pull Up")
             .RuleFor(command => command.Description, faker => faker.Lorem.Sentence(10))
             .RuleFor(command => command.MuscleGroups, faker => new List<MuscleGroup>() { MuscleGroup.Shoulders, MuscleGroup.Back }.ToArray())
+            .RuleFor(command => command.Shared, true)
             .Generate();
 
         // Act
@@ -116,7 +119,7 @@ public class ExercisesControllerTests : BaseIntegrationTest
             INSERT INTO Exercise (Id,Name,Description,MuscleGroups) VALUES (N'222637A6-CF25-41FB-9432-993622722DD2',N'Pull Up',N'Descr',N'3|1');
         ");
 
-        using var httpClient = factory.CreateClient(CreateClientOptions());
+        using var httpClient = CreateAuthenticatedClient();
 
         var command = new Faker<CreateExerciseResourceCommand>()
             .RuleFor(command => command.ExerciseId, faker=>  new ExerciseId(new Guid("222637A6-CF25-41FB-9432-993622722DD2")))
@@ -145,7 +148,7 @@ public class ExercisesControllerTests : BaseIntegrationTest
             DELETE FROM Exercise;
         ");
 
-        using var httpClient = factory.CreateClient(CreateClientOptions());
+        using var httpClient = CreateAuthenticatedClient();
 
         var command = new Faker<CreateExerciseResourceCommand>()
             .RuleFor(command => command.ExerciseId, faker => new ExerciseId(new Guid("222637A6-CF25-41FB-9432-993622722DD2")))
@@ -174,7 +177,16 @@ public class ExercisesControllerTests : BaseIntegrationTest
     #region Helpers
     private static WebApplicationFactoryClientOptions CreateClientOptions() => new() { AllowAutoRedirect = false };
 
-
+    // Create/CreateExerciseResource now require [Authorize] (ADR-007-jwt-bearer-authentication.md)
+    // — attach a validly-signed test token so these tests keep exercising the real handler
+    // instead of getting short-circuited at 401.
+    private HttpClient CreateAuthenticatedClient()
+    {
+        var httpClient = factory.CreateClient(CreateClientOptions());
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", TestJwtTokenFactory.CreateToken());
+        return httpClient;
+    }
 
     #endregion
 }

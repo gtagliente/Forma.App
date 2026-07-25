@@ -7,6 +7,7 @@ using MediatR;
 using Forma.Application.Exercise.Commands;
 using Forma.Application.Exercise.Responses;
 using Forma.CoreInfrastructure.Abstractions;
+using Forma.CoreInfrastructure.Caching;
 using DOMAIN_ENTITIES = Forma.Domain.Entities;
 using Forma.Domain.Builders.Contracts;
 using System;
@@ -19,7 +20,9 @@ public class CreateExerciseCommandHandler(
     IValidator<CreateExerciseCommand> validator,
     IExerciseWriteOnlyRepository<DOMAIN_ENTITIES.ExerciseAggregate.Exercise, ExerciseId> repository,
     IExerciseBuilder builder,
-    IUnitOfWork unitOfWork) : IRequestHandler<CreateExerciseCommand, Result<CreatedExerciseResponse>>
+    IUnitOfWork unitOfWork,
+    ICacheService cacheService,
+    ICurrentUserAccessor currentUserAccessor) : IRequestHandler<CreateExerciseCommand, Result<CreatedExerciseResponse>>
 {
     public async Task<Result<CreatedExerciseResponse>> Handle(
         CreateExerciseCommand request,
@@ -43,6 +46,11 @@ public class CreateExerciseCommandHandler(
 
         // Saving changes to the database and triggering events.
         await unitOfWork.SaveChangesAsync();
+
+        // Load-bearing cache fix: the event-driven invalidation only knows the Exercise's
+        // OwnerId (null for shared Exercises), not who acted — the command handler always knows
+        // the real actor.
+        await cacheService.RemoveAsync(ExerciseCacheKeys.ForUser(currentUserAccessor.UserId));
 
         // Returning the ID.
         return Result<CreatedExerciseResponse>.Created(
